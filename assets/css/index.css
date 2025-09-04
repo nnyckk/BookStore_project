@@ -321,6 +321,8 @@ tbody tr:hover .sell-icon {
   font-weight: 500;
 }
 
+
+
 #sellBookForm input,
 #sellBookForm textarea,
 #addBookForm input {
@@ -368,11 +370,18 @@ tbody tr:hover .sell-icon {
   background-color: var(--neutral-100);
 }
 
+input.invalid, textarea.invalid {
+  outline: 2px solid var(--error);
+  outline-offset: 2px;
+}
+
+#addError,
 #sellError {
   display: none;
   justify-content: center;
   margin: .5em 0 .5em 0;
   padding: .2em;
+  border-radius: .3em;
   color: var(--text-dark);
   background-color: var(--error);
   font-size: .8rem;

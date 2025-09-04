@@ -197,15 +197,18 @@
           <h2>Add a book</h2>
           <form id="addBookForm">
             <label for="bookTitle">Title</label>
-            <input type="text" id="bookTitle" required />
+            <input type="text" id="bookTitle" />
             <label for="bookAuthor">Author</label>
-            <input type="text" id="bookAuthor" required />
+            <input type="text" id="bookAuthor" />
             <label for="bookStock">Stock</label>
-            <input type="number" id="bookStock" required />
+            <input type="number" id="bookStock" />
             <label for="bookPrice">Price (€)</label>
-            <input type="text" id="bookPrice" required />
+            <input type="text" id="bookPrice" />
             <label for="bookIsbn">ISBN</label>
-            <input type="text" id="bookIsbn" required />
+            <input type="text" id="bookIsbn" />
+
+            <!-- Mesaj de eroare -->
+            <div id="addError"></div>
             <button type="submit" class="btn save-btn">Add book</button>
           </form>
         </div>
@@ -249,7 +252,7 @@
 
             <!-- Mesaj de eroare -->
             <div id="sellError"></div>
-            <button type="submit" class="btn save-btn">js text</button>
+            <button type="submit" class="btn save-btn">Sell book</button>
           </form>
         </div>
       </div>
@@ -262,7 +265,7 @@
 
 
     <footer class="app-footer">
-      <span>BookStore v1.1.0</span>
+      <span>BookStore v1.2.0</span>
     </footer>
 
     <script type="module" src="assets/js/firebase.js"></script>

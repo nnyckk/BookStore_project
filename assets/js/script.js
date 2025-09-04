@@ -181,31 +181,78 @@ document.addEventListener("DOMContentLoaded", async () => {
   // =========================================================
   // 7. Add / Edit Book (Firestore)
   // =========================================================
+  const addError = document.getElementById("addError");
+
+  // On form submit
   addBookForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const bookData = {
-      title: document.getElementById("bookTitle").value,
-      author: document.getElementById("bookAuthor").value,
-      stock: parseInt(document.getElementById("bookStock").value),
-      price: parseFloat(
-        document.getElementById("bookPrice").value.replace(",", ".")
-      ),
-      isbn: document.getElementById("bookIsbn").value,
-    };
+    const titleInput = document.getElementById("bookTitle");
+    const authorInput = document.getElementById("bookAuthor");
+    const stockInput = document.getElementById("bookStock");
+    const priceInput = document.getElementById("bookPrice");
+    const isbnInput = document.getElementById("bookIsbn");
 
-    if (editIndex) {
-      await updateBookInFirestore(editIndex, bookData); // Update book in Firestore
-      showSuccessPopup(
-        `Cartea "${bookData.title}" a fost actualizată cu succes!`
-      );
-    } else {
-      await addBookToFirestore(bookData); // Add new book in Firestore
-      showSuccessPopup(`Cartea "${bookData.title}" a fost adăugată cu succes!`);
+    // Reset previous errors
+    addError.textContent = "";
+    addError.style.display = "none";
+    [titleInput, authorInput, stockInput, priceInput, isbnInput].forEach(
+      (input) => input.classList.remove("invalid")
+    );
+
+    // -------- Validation checks --------
+    if (!titleInput.value.trim()) {
+      addError.textContent = "Title is required.";
+      titleInput.classList.add("invalid");
+      addError.style.display = "flex";
+      return;
     }
 
-    await loadBooks(); // Reload books
-    closeAddBookModal();
+    if (!authorInput.value.trim()) {
+      addError.textContent = "Author is required.";
+      authorInput.classList.add("invalid");
+      addError.style.display = "flex";
+      return;
+    }
+
+    if (
+      !stockInput.value ||
+      stockInput.value < 0 ||
+      !Number.isInteger(Number(stockInput.value))
+    ) {
+      addError.textContent = "Enter a valid stock number.";
+      stockInput.classList.add("invalid");
+      addError.style.display = "flex";
+      return;
+    }
+
+    if (!priceInput.value || Number(priceInput.value.replace(",", ".")) < 0) {
+      addError.textContent = "Enter a valid price.";
+      priceInput.classList.add("invalid");
+      addError.style.display = "flex";
+      return;
+    }
+
+    // -------- Prepare book data --------
+    const bookData = {
+      title: titleInput.value.trim(),
+      author: authorInput.value.trim(),
+      stock: parseInt(stockInput.value),
+      price: parseFloat(priceInput.value.replace(",", ".")),
+      isbn: isbnInput.value.trim(),
+    };
+
+    // -------- Add or update in Firestore --------
+    if (editIndex) {
+      await updateBookInFirestore(editIndex, bookData);
+      showSuccessPopup(`Book "${bookData.title}" updated successfully!`);
+    } else {
+      await addBookToFirestore(bookData);
+      showSuccessPopup(`Book "${bookData.title}" added successfully!`);
+    }
+
+    await loadBooks(); // Refresh table
+    closeAddBookModal(); // Close modal
   });
 
   // =========================================================
