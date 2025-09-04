@@ -70,17 +70,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       renderTable(); // Render normally if no sort saved
     }
 
-    const overlay = document.getElementById("noDataOverlay");
-    const tableBox = document.querySelector(".table-box");
-
-    // Show overlay if no data
-    if (books.length === 0) {
-      overlay.style.display = "flex";
-      tableBox.classList.add("active");
-    } else {
-      overlay.style.display = "none";
-      tableBox.classList.remove("active");
-    }
+    updateNoDataOverlay(books);
   }
 
   // =========================================================
@@ -111,13 +101,26 @@ document.addEventListener("DOMContentLoaded", async () => {
       tableBody.appendChild(row);
     });
 
-    updateRowColors(); // Apply alternate row colors
+    updateRowColors();
     updateSellIcons(); // Disable sell icons if stock = 0
   }
 
   // =========================================================
-  // 5. Use functions
+  // 5. Useful functions
   // =========================================================
+
+  function updateNoDataOverlay(list = books) {
+    const overlay = document.getElementById("noDataOverlay");
+    const tableBox = document.querySelector(".table-box");
+
+    if (list.length === 0) {
+      overlay.style.display = "flex";
+      tableBox.classList.add("active");
+    } else {
+      overlay.style.display = "none";
+      tableBox.classList.remove("active");
+    }
+  }
 
   function updateSellIcons() {
     const sellIcons = document.querySelectorAll(".sell-icon");
@@ -226,18 +229,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     renderTable(filteredBooks);
-
-    const overlay = document.getElementById("noDataOverlay");
-    const tableBox = document.querySelector(".table-box");
-
-    // Show overlay if no results
-    if (filteredBooks.length === 0) {
-      overlay.style.display = "flex";
-      tableBox.classList.add("active");
-    } else {
-      overlay.style.display = "none";
-      tableBox.classList.remove("active");
-    }
+    updateNoDataOverlay(filteredBooks);
   }
 
   searchInput.addEventListener("input", applyFilters);
