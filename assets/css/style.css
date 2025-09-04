@@ -1,0 +1,122 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Montserrat";
+}
+
+/* =========================
+      Font-Family-Declaration
+     ========================= */
+
+@font-face {
+  font-family: "Montserrat";
+  src: url("../fonts/Montserrat-Bold.woff2") format("woff2"),
+    url("../fonts/Montserrat-Bold.woff") format("woff");
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Montserrat";
+  src: url("../fontss/Montserrat-Italic.woff2") format("woff2"),
+    url("../fonts/Montserrat-Italic.woff") format("woff");
+  font-weight: normal;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Montserrat";
+  src: url("../fonts/Montserrat-Regular.woff2") format("woff2"),
+    url("../fonts/Montserrat-Regular.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Montserrat";
+  src: url("../fonts/Montserrat-Black.woff2") format("woff2"),
+    url("../fonts/Montserrat-Black.woff") format("woff");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Montserrat";
+  src: url("../fonts/Montserrat-BoldItalic.woff2") format("woff2"),
+    url("../fonts/Montserrat-BoldItalic.woff") format("woff");
+  font-weight: bold;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Montserrat";
+  src: url("../fonts/Montserrat-Medium.woff2") format("woff2"),
+    url("../fonts/Montserrat-Medium.woff") format("woff");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+html {
+  scroll-behavior: smooth;
+
+  /* 🎨 Primary Scale */
+  --primary-50: hsl(204, 54%, 95%);
+  --primary-100: hsl(204, 54%, 90%);
+  --primary-200: hsl(204, 54%, 75%);
+  --primary-300: hsl(204, 54%, 65%);
+  --primary-400: hsl(204, 54%, 55%);
+  --primary-500: hsl(204, 54%, 48%); /* Main */
+  --primary-600: hsl(204, 54%, 40%);
+  --primary-700: hsl(204, 54%, 32%);
+  --primary-800: hsl(204, 54%, 24%);
+  --primary-900: hsl(204, 54%, 16%);
+
+  /* ⚫ Neutral Scale */
+  --neutral-50: hsl(220, 23%, 97%); /* Light BG */
+  --neutral-100: hsl(220, 23%, 90%);
+  --neutral-200: hsl(220, 23%, 80%);
+  --neutral-300: hsl(220, 23%, 65%);
+  --neutral-400: hsl(220, 23%, 50%);
+  --neutral-500: hsl(220, 23%, 40%);
+  --neutral-600: hsl(220, 23%, 30%);
+  --neutral-700: hsl(220, 23%, 20%);
+  --neutral-800: hsl(220, 23%, 12%);
+  --neutral-900: hsl(220, 23%, 7%); /* Dark BG */
+
+  /* 🟢 Semantic Colors */
+  --success: hsl(145, 45%, 45%);
+  --success-hover: hsl(145, 45%, 35%);
+
+  --warning: hsl(40, 90%, 55%);
+  --warning-hover: hsl(40, 90%, 45%);
+
+  --error: hsl(0, 70%, 50%);
+  --error-hover: hsl(0, 70%, 40%);
+
+  /* ✨ Text Colors */
+  --text-light: hsl(202, 54%, 7%); /* for light backgrounds */
+  --text-dark: hsl(220, 23%, 97%); /* for dark backgrounds */
+
+  /* Base font sizes (clamp for responsiveness) */
+  --fs-h1: clamp(2.5rem, 6vw, 4rem); /* 40–64px */
+  --fs-h2: clamp(2rem, 5vw, 3rem); /* 32–48px */
+  --fs-h3: clamp(1.5rem, 4vw, 2.25rem); /* 24–36px */
+  --fs-h4: clamp(1.25rem, 3vw, 1.75rem); /* 20–28px */
+  --fs-h5: clamp(1.125rem, 2vw, 1.5rem); /* 18–24px */
+  --fs-h6: clamp(1rem, 1.5vw, 1.25rem); /* 16–20px */
+  --fs-body: 1rem; /* 16px */
+  --fs-small: 0.875rem;
+
+  /* Line heights */
+  --lh-heading: 0.9;
+  --lh-heading-small: 1.05;
+  --lh-body: 1.4;
+  --lh-big-text: 1.7;
+}
