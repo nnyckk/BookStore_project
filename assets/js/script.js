@@ -6,7 +6,7 @@ import {
 
 document.addEventListener("DOMContentLoaded", async () => {
   // =========================
-  // 1. DOM Elements
+  // 1. DOM ELEMENTS
   // =========================
   const tableBody = document.querySelector("#bookTable tbody");
   const searchInput = document.getElementById("searchInput");
@@ -17,6 +17,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const closeAddBookBtn = addBookModal.querySelector(".close");
   const addBookForm = document.getElementById("addBookForm");
   const addError = document.getElementById("addError");
+  const authorInput = document.getElementById("bookAuthor");
 
   const sellBookModal = document.getElementById("sellBookModal");
   const closeSellBookBtn = sellBookModal.querySelector(".sell-close");
@@ -24,10 +25,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   const sellQuantityInput = document.getElementById("sellQuantity");
   const sellNotesInput = document.getElementById("sellNotes");
   const sellConfirmBtn = sellBookForm.querySelector(".save-btn");
-
   const sellBookTitle = document.getElementById("sellBookTitle");
   const sellBookAuthor = document.getElementById("sellBookAuthor");
   const sellBookStock = document.getElementById("sellBookStock");
+  const sellError = document.getElementById("sellError");
 
   const titleHeader = document.getElementById("titleHeader");
   const authorHeader = document.getElementById("authorHeader");
@@ -42,21 +43,26 @@ document.addEventListener("DOMContentLoaded", async () => {
   const resetPriceFilter = document.getElementById("resetPriceFilter");
 
   // =========================
-  // 2. State Variables
+  // 2. STATE VARIABLES
   // =========================
   let books = [];
   let editIndex = null;
   let sellIndex = null;
-
   let sortState = { title: "asc", author: "asc" };
   let priceFilterState = { min: null, max: null };
 
   // =========================
-  // 3. Load & Initialize Books
+  // 3. INITIAL LOAD
+  // =========================
+  await loadBooks();
+
+  // =========================
+  // 4. BOOKS LOADING
   // =========================
   async function loadBooks() {
     books = await getBooksFromFirestore();
 
+    // Restore sort if exists
     const savedSort = localStorage.getItem("sortState");
     if (savedSort) {
       const { by, order } = JSON.parse(savedSort);
@@ -71,7 +77,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   // =========================
-  // 4. Table Rendering
+  // 5. TABLE RENDERING
   // =========================
   function renderTable(filteredBooks = null) {
     const list = filteredBooks || books;
@@ -99,6 +105,13 @@ document.addEventListener("DOMContentLoaded", async () => {
             </span>
         </td>
       `;
+
+      // Stock coloring
+      const stockCell = row.children[2];
+      if (book.stock === 0) stockCell.classList.add("stock-zero");
+      else if (book.stock < 3) stockCell.classList.add("stock-low");
+      else stockCell.classList.remove("stock-zero", "stock-low");
+
       tableBody.appendChild(row);
     });
 
@@ -107,7 +120,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   // =========================
-  // 5. Utility Functions
+  // 6. UTILITY FUNCTIONS
   // =========================
   function updateNoDataOverlay(list = books) {
     const overlay = document.getElementById("noDataOverlay");
@@ -149,8 +162,20 @@ document.addEventListener("DOMContentLoaded", async () => {
     setTimeout(() => popup.classList.remove("show"), 3000);
   }
 
+  function showAddError(input, message) {
+    addError.textContent = message;
+    addError.style.display = "flex";
+    input.classList.add("invalid");
+  }
+
+  function showSellError(input, message) {
+    sellError.textContent = message;
+    sellError.style.display = "flex";
+    input.classList.add("invalid");
+  }
+
   // =========================
-  // 6. Add/Edit Book Modal
+  // 7. ADD/EDIT BOOK MODAL
   // =========================
   function openAddBookModal(isEdit = false) {
     addBookModal.style.display = "flex";
@@ -179,13 +204,12 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 
   // =========================
-  // 7. Add/Edit Book Form
+  // 8. ADD/EDIT BOOK FORM
   // =========================
   addBookForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     const titleInput = document.getElementById("bookTitle");
-    const authorInput = document.getElementById("bookAuthor");
     const stockInput = document.getElementById("bookStock");
     const priceInput = document.getElementById("bookPrice");
     const isbnInput = document.getElementById("bookIsbn");
@@ -195,7 +219,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       i.classList.remove("invalid")
     );
 
-    // --- Validation ---
+    // Validation
     if (!titleInput.value.trim())
       return showAddError(titleInput, "Title is required.");
     if (!authorInput.value.trim())
@@ -208,6 +232,17 @@ document.addEventListener("DOMContentLoaded", async () => {
       return showAddError(stockInput, "Enter a valid stock number.");
     if (!priceInput.value || +priceInput.value.replace(",", ".") < 0)
       return showAddError(priceInput, "Enter a valid price.");
+    if (!isbnInput.value.trim())
+      return showAddError(isbnInput, "ISBN is required.");
+
+    // Duplicate ISBN check
+    const duplicate = books.find(
+      (b) =>
+        b.isbn.toLowerCase() === isbnInput.value.trim().toLowerCase() &&
+        b.id !== editIndex
+    );
+    if (duplicate)
+      return showAddError(isbnInput, "A book with this ISBN already exists!");
 
     const bookData = {
       title: titleInput.value.trim(),
@@ -233,14 +268,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     closeAddBookModal();
   });
 
-  function showAddError(input, message) {
-    addError.textContent = message;
-    addError.style.display = "flex";
-    input.classList.add("invalid");
-  }
-
   // =========================
-  // 8. Search & Price Filter
+  // 9. SEARCH & PRICE FILTER
   // =========================
   function applyFilters() {
     const text = searchInput.value.toLowerCase();
@@ -290,7 +319,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 
   // =========================
-  // 9. Sorting
+  // 10. SORTING
   // =========================
   function sortBooks(by, restore = false) {
     if (!restore) {
@@ -327,7 +356,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   authorHeader.addEventListener("click", () => sortBooks("author"));
 
   // =========================
-  // 10. Edit & Sell Actions
+  // 11. EDIT & SELL HANDLERS
   // =========================
   document.addEventListener("click", (e) => {
     const editIcon = e.target.closest(".edit-icon");
@@ -343,7 +372,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!book) return;
 
     document.getElementById("bookTitle").value = book.title;
-    document.getElementById("bookAuthor").value = book.author;
+    authorInput.value = book.author;
     document.getElementById("bookStock").value = book.stock;
     document.getElementById("bookPrice").value = book.price;
     document.getElementById("bookIsbn").value = book.isbn;
@@ -362,11 +391,17 @@ document.addEventListener("DOMContentLoaded", async () => {
     sellQuantityInput.value = book.stock > 0 ? 1 : 0;
     sellConfirmBtn.disabled = book.stock === 0;
     sellNotesInput.value = "";
+
+    // Reset error
+    sellQuantityInput.classList.remove("invalid");
+    sellError.style.display = "none";
+    sellError.textContent = "";
+
     sellBookModal.style.display = "flex";
   }
 
   // =========================
-  // 11. Sell Modal
+  // 12. SELL MODAL
   // =========================
   closeSellBookBtn.addEventListener(
     "click",
@@ -378,21 +413,19 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   sellBookForm.addEventListener("submit", async (e) => {
     e.preventDefault();
-    const sellError = document.getElementById("sellError");
     const quantity = Number(sellQuantityInput.value);
     const book = books.find((b) => b.id === sellIndex);
     if (!book) return;
 
     if (!quantity || quantity < 1 || !Number.isInteger(quantity)) {
-      sellError.textContent = "Enter a valid quantity.";
-      sellError.style.display = "flex";
-      return;
+      return showSellError(sellQuantityInput, "Enter a valid quantity.");
     }
 
     if (quantity > book.stock) {
-      sellError.textContent = "You cannot sell more than the available stock.";
-      sellError.style.display = "flex";
-      return;
+      return showSellError(
+        sellQuantityInput,
+        "You cannot sell more than the available stock."
+      );
     }
 
     sellError.style.display = "none";
@@ -409,7 +442,85 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 
   // =========================
-  // 12. Initial Load
+  // 13. AUTHOR AUTOCOMPLETE
   // =========================
-  await loadBooks();
+  const suggestionBox = document.getElementById("authorSuggestions");
+
+  let selectedIndex = -1; // index pentru navigare tastatură
+
+  authorInput.addEventListener("input", updateAuthorSuggestions);
+
+  authorInput.addEventListener("keydown", (e) => {
+    const items = suggestionBox.querySelectorAll(".suggestion-item");
+    if (!items.length) return;
+
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      selectedIndex = (selectedIndex + 1) % items.length;
+      highlightItem(items);
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      selectedIndex = (selectedIndex - 1 + items.length) % items.length;
+      highlightItem(items);
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      if (selectedIndex >= 0 && selectedIndex < items.length) {
+        authorInput.value = items[selectedIndex].textContent;
+        clearSuggestions();
+      }
+    } else if (e.key === "Escape") {
+      clearSuggestions();
+    }
+  });
+
+  document.addEventListener("click", (e) => {
+    if (!authorInput.contains(e.target) && !suggestionBox.contains(e.target)) {
+      clearSuggestions();
+    }
+  });
+
+  function updateAuthorSuggestions() {
+    const value = authorInput.value.toLowerCase();
+    suggestionBox.innerHTML = "";
+    suggestionBox.style.display = "none";
+    selectedIndex = -1;
+
+    if (!value) return;
+
+    const authors = [...new Set(books.map((b) => b.author))];
+    const matches = authors.filter((a) => a.toLowerCase().includes(value));
+
+    if (!matches.length) return;
+
+    matches.forEach((match) => {
+      const item = document.createElement("div");
+      item.textContent = match;
+      item.classList.add("suggestion-item");
+      item.addEventListener("click", () => {
+        authorInput.value = match;
+        clearSuggestions();
+      });
+      suggestionBox.appendChild(item);
+    });
+
+    suggestionBox.style.display = "block";
+  }
+
+  function highlightItem(items) {
+    items.forEach((item, i) => {
+      item.classList.toggle("highlight", i === selectedIndex);
+    });
+
+    // Scroll into view
+    const selectedItem = items[selectedIndex];
+    if (selectedItem) {
+      selectedItem.scrollIntoView({ block: "nearest" });
+    }
+  }
+
+  function clearSuggestions() {
+    suggestionBox.innerHTML = "";
+    suggestionBox.style.display = "none";
+    selectedIndex = -1;
+  }
 });

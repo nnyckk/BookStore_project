@@ -124,3 +124,21 @@ html {
   --border-default: 0.375rem;
   --border-circle: 50%;
 }
+
+/* =========================
+   GLOBAL SCROLLBAR STYLE
+   ========================= */
+   *::-webkit-scrollbar {
+    width: 0.35rem;
+    height: 0.3rem;
+  }
+  *::-webkit-scrollbar-track {
+    background: var(--neutral-50);
+  }
+  *::-webkit-scrollbar-thumb {
+    background: var(--neutral-900);
+    border-radius: 0.2rem;
+  }
+  *::-webkit-scrollbar-thumb:hover {
+    background: var(--neutral-700);
+  }
