@@ -1,7 +1,11 @@
 import {
-  getBooksFromFirestore,
   addBookToFirestore,
+  onBooksChange,
   updateBookInFirestore,
+  addAuthorToFirestore,
+  onAuthorsChange,
+  getAuthorsFromFirestore,
+  addBookAndAuthor,
 } from "./firebase.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -59,21 +63,24 @@ document.addEventListener("DOMContentLoaded", async () => {
   // =========================
   // 4. BOOKS LOADING
   // =========================
-  async function loadBooks() {
-    books = await getBooksFromFirestore();
+  function loadBooks() {
+    // Listen to real-time updates from Firestore
+    onBooksChange((updatedBooks) => {
+      books = updatedBooks;
 
-    // Restore sort if exists
-    const savedSort = localStorage.getItem("sortState");
-    if (savedSort) {
-      const { by, order } = JSON.parse(savedSort);
-      sortState[by] = order;
-      sortBooks(by, true);
-    } else {
-      renderTable();
-    }
+      // Restore sort if exists
+      const savedSort = localStorage.getItem("sortState");
+      if (savedSort) {
+        const { by, order } = JSON.parse(savedSort);
+        sortState[by] = order;
+        sortBooks(by, true); // render with saved sort
+      } else {
+        renderTable();
+      }
 
-    updateNoDataOverlay(books);
-    updateBookCount(books);
+      updateNoDataOverlay(books);
+      updateBookCount(books);
+    });
   }
 
   // =========================
@@ -195,6 +202,19 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   function closeAddBookModal() {
     addBookModal.style.display = "none";
+
+    // Reset error messages and invalid classes
+    addError.style.display = "none";
+    addError.textContent = "";
+    [
+      document.getElementById("bookTitle"),
+      authorInput,
+      document.getElementById("bookStock"),
+      document.getElementById("bookPrice"),
+      document.getElementById("bookIsbn"),
+    ].forEach((input) => {
+      input.classList.remove("invalid");
+    });
   }
 
   openAddBookBtn.addEventListener("click", () => openAddBookModal(false));
@@ -253,19 +273,25 @@ document.addEventListener("DOMContentLoaded", async () => {
     };
 
     if (editIndex !== null) {
+      // Edit existing book
       await updateBookInFirestore(editIndex, bookData);
+      await addAuthorToFirestore(bookData.author);
+      await loadAuthors();
+
+      closeAddBookModal();
       showSuccessPopup(
         `Book <strong>"${bookData.title}"</strong> updated successfully!`
       );
     } else {
-      await addBookToFirestore(bookData);
+      // New book → add book and ensure author exists
+      await addBookAndAuthor(bookData);
+      await loadAuthors();
+
+      closeAddBookModal();
       showSuccessPopup(
         `Book <strong>"${bookData.title}"</strong> added successfully!`
       );
     }
-
-    await loadBooks();
-    closeAddBookModal();
   });
 
   // =========================
@@ -442,14 +468,30 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 
   // =========================
-  // 13. AUTHOR AUTOCOMPLETE
+  // 13. AUTHOR AUTOCOMPLETE (REAL-TIME)
   // =========================
   const suggestionBox = document.getElementById("authorSuggestions");
+  let selectedIndex = -1;
+  let authorsCache = [];
 
-  let selectedIndex = -1; // index pentru navigare tastatură
+  // Listen to real-time changes in authors collection
+  function listenAuthorsRealtime() {
+    onAuthorsChange((authors) => {
+      authorsCache = authors; // update cache
+      updateAuthorSuggestions(); // refresh suggestions if input is not empty
+    });
+  }
 
-  authorInput.addEventListener("input", updateAuthorSuggestions);
+  // Call the listener on page load
+  listenAuthorsRealtime();
 
+  // Handle input changes
+  authorInput.addEventListener("input", () => {
+    selectedIndex = -1; // reset selection on new input
+    updateAuthorSuggestions();
+  });
+
+  // Keyboard navigation
   authorInput.addEventListener("keydown", (e) => {
     const items = suggestionBox.querySelectorAll(".suggestion-item");
     if (!items.length) return;
@@ -465,59 +507,61 @@ document.addEventListener("DOMContentLoaded", async () => {
     } else if (e.key === "Enter") {
       e.preventDefault();
       if (selectedIndex >= 0 && selectedIndex < items.length) {
-        authorInput.value = items[selectedIndex].textContent;
-        clearSuggestions();
+        selectAuthor(items[selectedIndex].textContent);
       }
     } else if (e.key === "Escape") {
       clearSuggestions();
     }
   });
 
+  // Close suggestions on outside click
   document.addEventListener("click", (e) => {
     if (!authorInput.contains(e.target) && !suggestionBox.contains(e.target)) {
       clearSuggestions();
     }
   });
 
+  // Update suggestion list
   function updateAuthorSuggestions() {
-    const value = authorInput.value.toLowerCase();
+    const value = authorInput.value.trim().toLowerCase();
     suggestionBox.innerHTML = "";
     suggestionBox.style.display = "none";
-    selectedIndex = -1;
 
     if (!value) return;
 
-    const authors = [...new Set(books.map((b) => b.author))];
-    const matches = authors.filter((a) => a.toLowerCase().includes(value));
-
+    const matches = authorsCache.filter((a) => a.toLowerCase().includes(value));
     if (!matches.length) return;
 
     matches.forEach((match) => {
       const item = document.createElement("div");
       item.textContent = match;
       item.classList.add("suggestion-item");
-      item.addEventListener("click", () => {
-        authorInput.value = match;
-        clearSuggestions();
-      });
+      item.addEventListener("click", () => selectAuthor(match));
       suggestionBox.appendChild(item);
     });
 
     suggestionBox.style.display = "block";
   }
 
+  // Highlight current item
   function highlightItem(items) {
     items.forEach((item, i) => {
       item.classList.toggle("highlight", i === selectedIndex);
     });
 
-    // Scroll into view
     const selectedItem = items[selectedIndex];
     if (selectedItem) {
       selectedItem.scrollIntoView({ block: "nearest" });
     }
   }
 
+  // Select an author from the suggestions
+  function selectAuthor(name) {
+    authorInput.value = name;
+    clearSuggestions();
+  }
+
+  // Clear suggestions
   function clearSuggestions() {
     suggestionBox.innerHTML = "";
     suggestionBox.style.display = "none";

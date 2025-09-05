@@ -3,11 +3,20 @@
 // ==========================================
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-analytics.js";
-import { getFirestore, collection, getDocs, addDoc, updateDoc, doc } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  addDoc,
+  updateDoc,
+  doc,
+  onSnapshot,
+  query,
+  where
+} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
 // ==========================================
 // 2. Firebase configuration
-// Replace these values with your Firebase project credentials
 // ==========================================
 const firebaseConfig = {
   apiKey: "AIzaSyAcl1hWq4vnXsycpslK8IwgLDxA1fll7iw",
@@ -16,7 +25,7 @@ const firebaseConfig = {
   storageBucket: "churchbookstore-9e9f5.firebasestorage.app",
   messagingSenderId: "184074879761",
   appId: "1:184074879761:web:10693f1b8ad82a00e102b0",
-  measurementId: "G-C6FEZW7D2G"
+  measurementId: "G-C6FEZW7D2G",
 };
 
 // ==========================================
@@ -26,59 +35,120 @@ const app = initializeApp(firebaseConfig);
 
 // ==========================================
 // 4. Initialize Firestore database
-// Exported so it can be used in other modules if needed
 // ==========================================
 export const db = getFirestore(app);
 
 // ==========================================
-// 5. Firestore helper functions
+// 5. Firestore helper functions (BOOKS)
 // ==========================================
 
-/**
- * Add a new book to the "books" collection
- * @param {Object} book - Book object containing data to store
- */
 export async function addBookToFirestore(book) {
   try {
-    // Add a new document to the "books" collection
     const docRef = await addDoc(collection(db, "books"), book);
-    console.log("Document added with ID:", docRef.id); // Log the auto-generated document ID
+    console.log("Book added with ID:", docRef.id);
   } catch (e) {
-    console.error("Error adding document:", e);
+    console.error("Error adding book:", e);
   }
 }
 
 /**
- * Retrieve all books from the "books" collection
- * @returns {Array} - List of books including their document IDs
+ * Listen to real-time updates on books collection
+ * @param {Function} callback - Function to call with updated books array
+ * @returns unsubscribe function
  */
-export async function getBooksFromFirestore() {
-  const booksCol = collection(db, "books"); // Reference to "books" collection
-  const snapshot = await getDocs(booksCol); // Fetch all documents in the collection
+export function onBooksChange(callback) {
+  const booksCol = collection(db, "books");
 
-  const books = [];
+  const unsubscribe = onSnapshot(booksCol, (snapshot) => {
+    const books = snapshot.docs.map((docSnap) => ({
+      id: docSnap.id,
+      ...docSnap.data(),
+    }));
+    callback(books);
+  });
+
+  return unsubscribe; // you can call unsubscribe() to stop listening
+}
+
+export async function updateBookInFirestore(bookId, updatedData) {
+  try {
+    const bookRef = doc(db, "books", bookId);
+    await updateDoc(bookRef, updatedData);
+    console.log("Book updated:", bookId);
+  } catch (e) {
+    console.error("Error updating book:", e);
+  }
+}
+
+// ==========================================
+// 6. Firestore helper functions (AUTHORS)
+// ==========================================
+
+export async function addAuthorToFirestore(authorName) {
+  try {
+    const authorsCol = collection(db, "authors");
+
+    // Normalize name to check for duplicates
+    const normalizedNew = authorName.trim().toLowerCase();
+
+    const snapshot = await getDocs(authorsCol);
+    const exists = snapshot.docs.some((docSnap) => {
+      const existingName = docSnap.data().name.trim().toLowerCase();
+      return existingName === normalizedNew;
+    });
+
+    if (exists) {
+      console.log("Author already exists:", authorName);
+      return;
+    }
+
+    // Add author in original casing
+    const docRef = await addDoc(authorsCol, { name: authorName });
+    console.log("Author added with ID:", docRef.id);
+  } catch (e) {
+    console.error("Error adding author:", e);
+  }
+}
+
+/**
+ * Listen to real-time updates on authors collection
+ * @param {Function} callback - Function to call with updated authors array
+ * @returns unsubscribe function
+ */
+export function onAuthorsChange(callback) {
+  const authorsCol = collection(db, "authors");
+
+  const unsubscribe = onSnapshot(authorsCol, (snapshot) => {
+    const authors = snapshot.docs.map((docSnap) => docSnap.data().name);
+    callback(authors);
+  });
+
+  return unsubscribe; // call unsubscribe() to stop listening
+}
+
+export async function getAuthorsFromFirestore() {
+  const authorsCol = collection(db, "authors");
+  const snapshot = await getDocs(authorsCol);
+
+  const authors = [];
   snapshot.forEach((docSnap) => {
-    // For each document, combine its ID and data into an object
-    books.push({
+    authors.push({
       id: docSnap.id,
       ...docSnap.data(),
     });
   });
 
-  return books;
+  return authors;
 }
 
-/**
- * Update an existing book in the "books" collection
- * @param {string} bookId - Firestore document ID of the book to update
- * @param {Object} updatedData - Object containing the fields to update
- */
-export async function updateBookInFirestore(bookId, updatedData) {
+// Add book and ensure author exists
+export async function addBookAndAuthor(book) {
   try {
-    const bookRef = doc(db, "books", bookId); // Get reference to the specific book document
-    await updateDoc(bookRef, updatedData); // Update the document with new data
-    console.log("Document updated:", bookId);
+    const docRef = await addDoc(collection(db, "books"), book);
+    console.log("Book added with ID:", docRef.id);
+
+    await addAuthorToFirestore(book.author);
   } catch (e) {
-    console.error("Error updating document:", e);
+    console.error("Error adding book & author:", e);
   }
 }
