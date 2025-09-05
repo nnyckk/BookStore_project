@@ -273,19 +273,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     };
 
     if (editIndex !== null) {
-      // Edit existing book
       await updateBookInFirestore(editIndex, bookData);
       await addAuthorToFirestore(bookData.author);
-      await loadAuthors();
 
       closeAddBookModal();
       showSuccessPopup(
         `Book <strong>"${bookData.title}"</strong> updated successfully!`
       );
     } else {
-      // New book → add book and ensure author exists
       await addBookAndAuthor(bookData);
-      await loadAuthors();
 
       closeAddBookModal();
       showSuccessPopup(
