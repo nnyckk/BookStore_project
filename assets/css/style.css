@@ -119,4 +119,8 @@ html {
   --lh-heading-small: 1.05;
   --lh-body: 1.4;
   --lh-big-text: 1.7;
+
+  /* border radius */
+  --border-default: 0.375rem;
+  --border-circle: 50%;
 }

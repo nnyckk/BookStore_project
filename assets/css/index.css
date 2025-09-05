@@ -1,3 +1,4 @@
+
 /* ---------------------------------------------
    Main Layout
 --------------------------------------------- */
@@ -20,7 +21,7 @@
 }
 
 .logo {
-  width: 100%;
+  width: 115%;
   margin-bottom: 5rem;
 }
 
@@ -39,6 +40,28 @@
   justify-content: center;
 }
 
+.playground-container {
+  flex: 14;
+  height: 100vh;
+  background-color: var(--neutral-100);
+}
+
+.container {
+  width: 100%;
+  padding: 1rem;
+}
+
+.menu-separator {
+  width: 100%;
+  height: 0.1rem;
+  border-radius: 0.5em;
+  background-color: var(--neutral-100);
+  margin: 0.5rem auto;
+}
+
+/* ---------------------------------------------
+   Buttons (Menu / User / General)
+--------------------------------------------- */
 .btn {
   border: none;
   cursor: pointer;
@@ -53,7 +76,7 @@
   justify-content: center;
   align-items: center;
   background-color: transparent;
-  border-radius: 50%;
+  border-radius: var(--border-circle);
   padding: 0.5rem;
 }
 
@@ -73,24 +96,6 @@
   fill: var(--neutral-900);
 }
 
-.playground-container {
-  flex: 14;
-  height: 100vh;
-  background-color: var(--neutral-100);
-}
-
-.container {
-  width: 100%;
-  padding: 1rem;
-}
-
-.menu-separator {
-  width: 70%;
-  height: 0.0625rem; /* 1px */
-  background-color: var(--neutral-100);
-  margin: 0.5rem auto;
-}
-
 /* ---------------------------------------------
    Search Bar
 --------------------------------------------- */
@@ -98,7 +103,7 @@
   display: flex;
   align-items: center;
   padding: 0.7rem;
-  border-radius: 0.2rem 0.2rem 0 0;
+  border-radius: 0.375rem 0.375rem 0 0;
   background-color: var(--neutral-50);
 }
 
@@ -109,7 +114,7 @@
 
 .search-bar input {
   flex: 1;
-  font-size: 1rem;
+  font-size: var(--fs-body);
   border: none;
   outline: none;
   background-color: var(--neutral-50);
@@ -117,7 +122,7 @@
 }
 
 .search-bar input::placeholder {
-  font-size: 0.8rem;
+  font-size: var(--fs-body);
   color: var(--neutral-200);
 }
 
@@ -131,7 +136,7 @@
   background-color: var(--neutral-50);
   border: 0.0625rem solid var(--neutral-100);
   border-top: none;
-  border-radius: 0 0 0.2rem 0.2rem;
+  border-radius: 0 0 0.375rem 0.375rem;
   box-shadow: rgba(17, 17, 26, 0.05) 0 0.0625rem 0,
               rgba(17, 17, 26, 0.1) 0 0 0.5rem;
 }
@@ -153,9 +158,12 @@
 }
 
 .table-wrapper {
-  position: relative; /* for absolute positioning of overlays */
+  position: relative; /* For overlays like no-data message */
 }
 
+/* ---------------------------------------------
+   Table Styling
+--------------------------------------------- */
 table {
   width: 100%;
   border-collapse: collapse;
@@ -173,7 +181,7 @@ thead {
 
 th {
   padding: 0.75rem 2rem;
-  font-size: 0.7rem;
+  font-size: 1.1rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.1em;
@@ -181,7 +189,7 @@ th {
 
 td {
   padding: 1rem 2rem;
-  font-size: 0.9rem;
+  font-size: var(--fs-body);
   font-weight: 400;
   border-bottom: 0.0625rem solid var(--neutral-100);
 }
@@ -219,10 +227,16 @@ tbody tr:nth-child(even) {
 }
 
 #bookTable th:nth-child(3),
-#bookTable td:nth-child(3),
+#bookTable td:nth-child(3) {
+  max-width: 5rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 #bookTable th:nth-child(4),
 #bookTable td:nth-child(4) {
-  max-width: 5rem;
+  max-width: 5.5rem;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -242,7 +256,7 @@ tbody tr:nth-child(even) {
   transform: translateY(-50%);
   display: none;
   cursor: pointer;
-  border-radius: 50%;
+  border-radius: var(--border-circle);
   padding: 0.3rem;
   transition: 0.2s ease;
 }
@@ -255,6 +269,7 @@ tbody tr:nth-child(even) {
   right: 1rem;
 }
 
+/* Show icons on row hover */
 tbody tr:hover .edit-icon,
 tbody tr:hover .sell-icon {
   display: flex;
@@ -268,20 +283,117 @@ tbody tr:hover .sell-icon {
 .edit-icon svg,
 .sell-icon svg {
   fill: var(--neutral-900);
- 
 }
 
-/* Sell disabled if no stock */
-.sell-icon.disabled{
+/* Sell disabled state */
+.sell-icon.disabled {
   pointer-events: none;
 }
-.sell-icon.disabled svg{
+
+.sell-icon.disabled svg {
   fill: var(--neutral-300);
 }
 
+/* ---------------------------------------------
+   Table Header Adjustments (Sorting / Price)
+--------------------------------------------- */
+#bookTable th#titleHeader,
+#bookTable th#authorHeader {
+  position: relative;
+  cursor: pointer;
+}
+
+.sort-arrow {
+  position: absolute;
+  top: 0.5rem;
+}
+
+.price-filter {
+  position: absolute;
+  top: 0.4rem;
+  margin-left: 0.5rem;
+  cursor: pointer;
+}
+
+.sort-arrow svg,
+.price-filter svg {
+  fill: var(--primary-50);
+  transition: 0.2s ease;
+}
+
+.price-filter.active svg {
+  fill: var(--warning);
+}
 
 /* ---------------------------------------------
-   Modals (Add/Edit/Sell)
+   Price Filter Container
+--------------------------------------------- */
+#priceFilter {
+  display: none;
+  position: absolute;
+  top: 2.4rem;
+  width: 12rem;
+  padding: 0.5rem;
+  gap: 0.3rem;
+  flex-direction: column;
+  background-color: var(--neutral-50);
+  border: 0.0625rem solid var(--neutral-100);
+  border-radius: var(--border-default);
+  z-index: 9999;
+  box-shadow: rgba(0,0,0,0.15) 0 0.3rem 0.6rem;
+  animation: fadeIn 0.2s ease;
+}
+
+#priceFilter input {
+  width: 100%;
+  padding: 0.5rem;
+  font-size: var(--fs-small);
+  border: 1px solid var(--neutral-300);
+  border-radius: var(--border-default);
+}
+
+.price-filter-buttons {
+  display: flex;
+  gap: 0.3rem;
+  justify-content: center;
+  align-items: center;
+  margin-top: 0.5em;
+}
+
+#applyPriceFilter {
+  flex: 7;
+  padding: 0.5rem;
+  font-size: var(--fs-small);
+  text-transform: uppercase;
+  border-radius: var(--border-default);
+  border: none;
+  cursor: pointer;
+  background-color: var(--primary-500);
+  color: var(--text-dark);
+}
+
+#applyPriceFilter:hover {
+  background-color: var(--primary-600);
+}
+
+#resetPriceFilter {
+  flex: 3;
+  padding: 0.5rem;
+  font-size: var(--fs-small);
+  text-transform: uppercase;
+  border-radius: var(--border-default);
+  border: none;
+  cursor: pointer;
+  background-color: var(--warning);
+  color: var(--text-dark);
+}
+
+#resetPriceFilter:hover {
+  background-color: var(--warning-hover);
+}
+
+/* ---------------------------------------------
+   Modals (Add / Edit / Sell)
 --------------------------------------------- */
 .modal {
   display: none;
@@ -300,8 +412,8 @@ tbody tr:hover .sell-icon {
   position: relative;
   background-color: var(--neutral-50);
   padding: 1.25rem;
-  border-radius: 0.3rem;
-  width: 25rem;
+  border-radius: var(--border-default);
+  width: 30rem;
   max-width: 90%;
   box-shadow: 0 0.375rem 1.25rem rgba(0,0,0,0.2);
   animation: fadeIn 0.3s ease;
@@ -309,7 +421,7 @@ tbody tr:hover .sell-icon {
 
 .modal-content h2 {
   margin-top: 0;
-  font-size: 1.5rem;
+  font-size: var(--fs-h4);
   text-align: center;
   color: var(--primary-900);
 }
@@ -317,12 +429,11 @@ tbody tr:hover .sell-icon {
 .modal-content label {
   display: block;
   margin: 0.625rem 0 0.3125rem;
-  font-size: 1rem;
+  font-size: var(--fs-h6);
   font-weight: 500;
 }
 
-
-
+/* Inputs inside modals */
 #sellBookForm input,
 #sellBookForm textarea,
 #addBookForm input {
@@ -330,18 +441,19 @@ tbody tr:hover .sell-icon {
   padding: 0.5rem;
   margin-bottom: 0.7rem;
   border: 1px solid var(--neutral-300);
-  border-radius: 0.375rem;
-  font-size: 0.9rem;
+  border-radius: var(--border-default);
+  font-size: var(--fs-body);
   color: var(--text-light);
 }
 
 .save-btn {
   width: 100%;
   padding: 1rem 0.5rem;
+  font-size: var(--fs-body);
   background-color: var(--primary-500);
   color: var(--text-dark);
   border: none;
-  border-radius: 0.375rem;
+  border-radius: var(--border-default);
   cursor: pointer;
 }
 
@@ -349,20 +461,15 @@ tbody tr:hover .sell-icon {
   background-color: var(--primary-600);
 }
 
-.close svg {
-  fill: var(--neutral-900);
-}
-
+/* Close button inside modals */
 .close {
   display: flex;
   position: absolute;
   top: 1.15rem;
   right: 1.25rem;
-
   cursor: pointer;
-  border-radius: 50%;
-  padding: .3rem;
-
+  border-radius: var(--border-circle);
+  padding: 0.3rem;
   transition: 0.2s ease;
 }
 
@@ -370,7 +477,13 @@ tbody tr:hover .sell-icon {
   background-color: var(--neutral-100);
 }
 
-input.invalid, textarea.invalid {
+.close svg {
+  fill: var(--neutral-900);
+}
+
+/* Input error styling */
+input.invalid,
+textarea.invalid {
   outline: 2px solid var(--error);
   outline-offset: 2px;
 }
@@ -379,37 +492,13 @@ input.invalid, textarea.invalid {
 #sellError {
   display: none;
   justify-content: center;
-  margin: .5em 0 .5em 0;
-  padding: .2em;
-  border-radius: .3em;
+  margin: 0.5em 0;
+  padding: 0.2em;
+  border-radius: var(--border-default);
   color: var(--text-dark);
   background-color: var(--error);
-  font-size: .8rem;
+  font-size: var(--fs-small);
   font-weight: 500;
-}
-
-.popup {
-  display: block;
-  position: fixed;
-  bottom: 1.3rem; 
-  right: 1.3rem;
-  z-index: 9999;
-  background-color: var(--success);
-  color: var(--text-dark);
-  font-size: 1rem;
-  padding: 0.8em;
-  border-radius: 0.3rem;
-  box-shadow: 0 0.13rem 0.38rem rgba(0, 0, 0, 0.3);
-  opacity: 0;
-  transform: translateY(1.3rem); 
-  transition: 0.3s ease-in-out;
-  pointer-events: none;
-}
-
-.popup.show {
-  opacity: 1;
-  transform: translateY(0);
-  pointer-events: auto;
 }
 
 /* ---------------------------------------------
@@ -429,138 +518,49 @@ input.invalid, textarea.invalid {
 
 .info-label {
   font-weight: 700;
-  font-size: 1rem;
+  font-size: var(--fs-h6);
   color: var(--text-light);
 }
 
 .info-value {
   font-weight: 400;
-  font-size: 0.9rem;
+  font-size: var(--fs-h6);
   color: var(--text-light);
 }
 
-/* Separator line */
 .separator {
-  height: 0.0625rem;
+  height: 0.1rem;
   border: none;
+  border-radius: var(--border-default);
   background-color: var(--neutral-200);
   margin: 1rem 0;
 }
 
 /* ---------------------------------------------
-   Keyframe Animations
+   Popups
 --------------------------------------------- */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-0.5rem);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* ---------------------------------------------
-   Sort Arrows (Title / Author) & Price Filter
---------------------------------------------- */
-.sort-arrow {
-  position: absolute;
-  top: 0.2rem;
-}
-
-.price-filter {
-  position: absolute;
-  top: 0.25rem;
-  margin-left: 0.5rem;
-  cursor: pointer;
-}
-
-.sort-arrow svg,
-.price-filter svg {
-  fill: var(--primary-50);
-
-  transition: 0.2s ease;
-}
-
-.price-filter.active svg {
-  fill: var(--warning);
-}
-
-/* ---------------------------------------------
-   Price Filter Container
---------------------------------------------- */
-#priceFilter {
-  display: none;
-  position: absolute;
-  top: 2.4rem;
-  width: 10rem;
-  padding: 0.5rem;
-  gap: 0.3rem;
-  flex-direction: column;
-  background-color: var(--neutral-50);
-  border: 0.0625rem solid var(--neutral-100);
-  border-radius: 0.3rem;
+.popup {
+  display: block;
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
   z-index: 9999;
-  box-shadow: rgba(0,0,0,0.15) 0 0.3rem 0.6rem;
-
-  animation: fadeIn 0.2s ease;
-}
-
-#priceFilter input {
-  width: 100%;
-  padding: 0.5rem;
-  font-size: 0.7rem;
-  border: 1px solid var(--neutral-300);
-  border-radius: 0.3rem;
-}
-
-.price-filter-buttons {
-  display: flex;
-  gap: 0.5rem;
-  justify-content: center;
-  align-items: center;
-}
-
-#applyPriceFilter {
-  flex: 7;
-  padding: 0.5rem;
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  border-radius: 0.3rem;
-  border: none;
-  cursor: pointer;
-  background-color: var(--primary-500);
+  background-color: var(--success);
   color: var(--text-dark);
+  font-size: var(--fs-body);
+  padding: 1em;
+  border-radius: var(--border-default);
+  box-shadow: 0 0.13rem 0.38rem rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  transform: translateY(1.3rem);
+  transition: 0.3s ease-in-out;
+  pointer-events: none;
 }
 
-#applyPriceFilter:hover {
-  background-color: var(--primary-600);
-}
-
-#resetPriceFilter {
-  flex: 3;
-  padding: 0.5rem;
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  border-radius: 0.3rem;
-  border: none;
-  cursor: pointer;
-  background-color: var(--warning);
-  color: var(--text-dark);
-}
-
-#resetPriceFilter:hover {
-  background-color: var(--warning-hover);
-}
-
-/* ---------------------------------------------
-   Table Header Adjustments for Sorting / Filter
---------------------------------------------- */
-#bookTable th#titleHeader,
-#bookTable th#authorHeader {
-  position: relative;
-  cursor: pointer;
+.popup.show {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
 }
 
 /* ---------------------------------------------
@@ -579,22 +579,49 @@ input.invalid, textarea.invalid {
   display: none;
   justify-content: center;
   align-items: center;
-  font-size: 1.5rem;
+  font-size: var(--fs-h4);
   font-weight: bold;
   color: var(--neutral-900);
-  background: rgba(red, green, blue, alpha);
   z-index: 10;
-  pointer-events: none; /* allow clicks/scrolls through overlay */
+  pointer-events: none;
 }
 
-
+/* ---------------------------------------------
+   Footer / Book Count
+--------------------------------------------- */
 .app-footer {
   width: 100%;
   padding: 0.1rem 1rem;
   text-align: right;
   color: var(--neutral-500);
-  font-size: 0.85rem;
+  font-size: 0.7rem;
   position: fixed;
   bottom: 0;
   left: 0;
+  z-index: 999;
+}
+
+.book-count {
+  margin-left: auto;
+  font-size: var(--fs-h6);
+  font-weight: 500;
+  color: var(--text-dark);
+  background: var(--neutral-900);
+  padding: 0.3em 0.6em;
+  border-radius: var(--border-default);
+  cursor: default;
+}
+
+/* ---------------------------------------------
+   Keyframe Animations
+--------------------------------------------- */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-0.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
