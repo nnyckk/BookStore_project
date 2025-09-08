@@ -615,7 +615,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   // 15. Auto Log Out Timer (10)
   // =========================
 
-  const AUTO_LOGOUT_TIME = 1 * 60 * 1000;
+  const AUTO_LOGOUT_TIME = 10 * 60 * 1000;
   let logoutTimer;
 
   function resetLogoutTimer() {
