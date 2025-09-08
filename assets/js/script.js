@@ -582,7 +582,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const userRole = sessionStorage.getItem("userRole");
 
   if (userName && userEmail) {
-    userGreeting.innerHTML = `Hello, <em>${userName}</em>`;
+    userGreeting.innerHTML = `Hello, ${userName}`;
     userEmailEl.innerHTML = `<strong>Email:</strong> ${userEmail}`;
     userRoleDisplay.innerHTML = userRole
       ? `<strong>Role:</strong> ${userRole}`

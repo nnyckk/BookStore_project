@@ -44,7 +44,8 @@ loginForm.addEventListener("submit", async (e) => {
   const password = loginPassword.value;
 
   if (!email) return showLoginError(loginEmail, "Please enter your email.");
-  if (!password) return showLoginError(loginPassword, "Please enter your password.");
+  if (!password)
+    return showLoginError(loginPassword, "Please enter your password.");
 
   // Show spinner & disable button
   btnText.style.display = "none";
@@ -55,27 +56,32 @@ loginForm.addEventListener("submit", async (e) => {
     // Authenticate user
     const user = await loginWithEmail(email, password);
 
-    // Fetch user data from Firestore
+    // Fetch user data
     const userData = await getUserData(user.uid);
 
     if (!userData) {
       throw new Error("User not found in database.");
     }
 
-    // Save user info in sessionStorage
+    // Save user info
     sessionStorage.setItem("userName", userData.name);
     sessionStorage.setItem("userRole", userData.role);
     sessionStorage.setItem("userEmail", userData.email);
 
-    // Redirect to main page
+    // Redirect
     window.location.href = "books.html";
   } catch (err) {
-    // Show any error (login failed, user not found etc.)
-    showLoginError(loginEmail, err.message);
+    // Map Firebase errors to friendly messages
+    let message = "Incorrect email or password.";
+    if (err.message === "User not found in database.") {
+      message = "User not found in database.";
+    }
+
+    showLoginError(loginEmail, message);
     loginEmail.classList.add("invalid");
     loginPassword.classList.add("invalid");
   } finally {
-    // Hide spinner & enable button
+    // Reset button state
     btnText.style.display = "inline-block";
     spinner.style.display = "none";
     loginBtn.disabled = false;
