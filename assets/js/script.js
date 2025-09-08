@@ -611,4 +611,36 @@ document.addEventListener("DOMContentLoaded", async () => {
       userModal.style.display = "none";
     }
   });
+
+
+
+
+
+  // Timeout pentru auto log out (10 minute)
+const AUTO_LOGOUT_TIME = 1 * 60 * 1000; // 10 minute în milisecunde
+let logoutTimer;
+
+// Resetează timer-ul la orice interacțiune
+function resetLogoutTimer() {
+  if (logoutTimer) clearTimeout(logoutTimer);
+  logoutTimer = setTimeout(async () => {
+    sessionStorage.clear();
+    await logoutUser();
+    alert("You have been logged out due to inactivity.");
+    window.location.href = "login.html";
+  }, AUTO_LOGOUT_TIME);
+}
+
+// Evenimente care resetează timer-ul
+['click', 'mousemove', 'keydown', 'scroll', 'touchstart'].forEach(event => {
+  window.addEventListener(event, resetLogoutTimer);
+});
+
+// Pornim timer-ul la încărcarea paginii
+resetLogoutTimer();
+
+// Curățare sessionStorage când tab-ul este închis
+window.addEventListener("beforeunload", () => {
+  sessionStorage.clear();
+});
 });
