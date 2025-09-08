@@ -605,42 +605,36 @@ document.addEventListener("DOMContentLoaded", async () => {
     window.location.href = "index.html";
   });
 
-  // Închid modalul dacă dai click pe fundal
   window.addEventListener("click", (e) => {
     if (e.target === userModal) {
       userModal.style.display = "none";
     }
   });
 
+  // =========================
+  // 15. Auto Log Out Timer (10)
+  // =========================
 
+  const AUTO_LOGOUT_TIME = 1 * 60 * 1000;
+  let logoutTimer;
 
+  function resetLogoutTimer() {
+    if (logoutTimer) clearTimeout(logoutTimer);
+    logoutTimer = setTimeout(async () => {
+      sessionStorage.clear();
+      await logoutUser();
+      alert("You have been logged out due to inactivity.");
+      window.location.href = "index.html";
+    }, AUTO_LOGOUT_TIME);
+  }
 
+  ["click", "mousemove", "keydown", "scroll", "touchstart"].forEach((event) => {
+    window.addEventListener(event, resetLogoutTimer);
+  });
 
-  // Timeout pentru auto log out (10 minute)
-const AUTO_LOGOUT_TIME = 1 * 60 * 1000; // 10 minute în milisecunde
-let logoutTimer;
+  resetLogoutTimer();
 
-// Resetează timer-ul la orice interacțiune
-function resetLogoutTimer() {
-  if (logoutTimer) clearTimeout(logoutTimer);
-  logoutTimer = setTimeout(async () => {
+  window.addEventListener("beforeunload", () => {
     sessionStorage.clear();
-    await logoutUser();
-    alert("You have been logged out due to inactivity.");
-    window.location.href = "login.html";
-  }, AUTO_LOGOUT_TIME);
-}
-
-// Evenimente care resetează timer-ul
-['click', 'mousemove', 'keydown', 'scroll', 'touchstart'].forEach(event => {
-  window.addEventListener(event, resetLogoutTimer);
-});
-
-// Pornim timer-ul la încărcarea paginii
-resetLogoutTimer();
-
-// Curățare sessionStorage când tab-ul este închis
-window.addEventListener("beforeunload", () => {
-  sessionStorage.clear();
-});
+  });
 });
