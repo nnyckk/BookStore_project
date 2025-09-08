@@ -611,14 +611,17 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   });
 
-  // =========================
-  // 15. Auto Log Out Timer (10)
-  // =========================
-
+  // ==========================================
+  // Auto Logout after 10 minutes of inactivity
+  // ==========================================
   const AUTO_LOGOUT_TIME = 10 * 60 * 1000;
   let logoutTimer;
 
-  function resetLogoutTimer() {
+  function updateLastActivity() {
+    sessionStorage.setItem("lastActivity", Date.now());
+  }
+
+  function startLogoutTimer() {
     if (logoutTimer) clearTimeout(logoutTimer);
     logoutTimer = setTimeout(async () => {
       sessionStorage.clear();
@@ -629,12 +632,20 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   ["click", "mousemove", "keydown", "scroll", "touchstart"].forEach((event) => {
-    window.addEventListener(event, resetLogoutTimer);
+    window.addEventListener(event, () => {
+      updateLastActivity();
+      startLogoutTimer();
+    });
   });
 
-  resetLogoutTimer();
-
-  window.addEventListener("beforeunload", () => {
+  const lastActivity = sessionStorage.getItem("lastActivity");
+  if (lastActivity && Date.now() - lastActivity > AUTO_LOGOUT_TIME) {
     sessionStorage.clear();
-  });
+    logoutUser();
+    alert("You have been logged out due to inactivity.");
+    window.location.href = "index.html";
+  } else {
+    updateLastActivity();
+    startLogoutTimer();
+  }
 });
