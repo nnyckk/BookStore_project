@@ -3,6 +3,7 @@
 // ==========================================
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-analytics.js";
+
 import {
   getFirestore,
   collection,
@@ -12,8 +13,16 @@ import {
   doc,
   onSnapshot,
   query,
-  where
+  where,
+  getDoc
 } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  onAuthStateChanged,
+  signOut
+} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
 
 // ==========================================
 // 2. Firebase configuration
@@ -32,16 +41,17 @@ const firebaseConfig = {
 // 3. Initialize Firebase App
 // ==========================================
 const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
 
 // ==========================================
-// 4. Initialize Firestore database
+// 4. Initialize Firestore + Auth
 // ==========================================
 export const db = getFirestore(app);
+export const auth = getAuth(app);
 
 // ==========================================
 // 5. Firestore helper functions (BOOKS)
 // ==========================================
-
 export async function addBookToFirestore(book) {
   try {
     const docRef = await addDoc(collection(db, "books"), book);
@@ -51,14 +61,8 @@ export async function addBookToFirestore(book) {
   }
 }
 
-/**
- * Listen to real-time updates on books collection
- * @param {Function} callback - Function to call with updated books array
- * @returns unsubscribe function
- */
 export function onBooksChange(callback) {
   const booksCol = collection(db, "books");
-
   const unsubscribe = onSnapshot(booksCol, (snapshot) => {
     const books = snapshot.docs.map((docSnap) => ({
       id: docSnap.id,
@@ -66,8 +70,7 @@ export function onBooksChange(callback) {
     }));
     callback(books);
   });
-
-  return unsubscribe; // you can call unsubscribe() to stop listening
+  return unsubscribe;
 }
 
 export async function updateBookInFirestore(bookId, updatedData) {
@@ -83,12 +86,9 @@ export async function updateBookInFirestore(bookId, updatedData) {
 // ==========================================
 // 6. Firestore helper functions (AUTHORS)
 // ==========================================
-
 export async function addAuthorToFirestore(authorName) {
   try {
     const authorsCol = collection(db, "authors");
-
-    // Normalize name to check for duplicates
     const normalizedNew = authorName.trim().toLowerCase();
 
     const snapshot = await getDocs(authorsCol);
@@ -102,7 +102,6 @@ export async function addAuthorToFirestore(authorName) {
       return;
     }
 
-    // Add author in original casing
     const docRef = await addDoc(authorsCol, { name: authorName });
     console.log("Author added with ID:", docRef.id);
   } catch (e) {
@@ -110,45 +109,76 @@ export async function addAuthorToFirestore(authorName) {
   }
 }
 
-/**
- * Listen to real-time updates on authors collection
- * @param {Function} callback - Function to call with updated authors array
- * @returns unsubscribe function
- */
 export function onAuthorsChange(callback) {
   const authorsCol = collection(db, "authors");
-
   const unsubscribe = onSnapshot(authorsCol, (snapshot) => {
     const authors = snapshot.docs.map((docSnap) => docSnap.data().name);
     callback(authors);
   });
-
-  return unsubscribe; // call unsubscribe() to stop listening
+  return unsubscribe;
 }
 
 export async function getAuthorsFromFirestore() {
   const authorsCol = collection(db, "authors");
   const snapshot = await getDocs(authorsCol);
-
-  const authors = [];
-  snapshot.forEach((docSnap) => {
-    authors.push({
-      id: docSnap.id,
-      ...docSnap.data(),
-    });
-  });
-
-  return authors;
+  return snapshot.docs.map((docSnap) => ({ id: docSnap.id, ...docSnap.data() }));
 }
 
-// Add book and ensure author exists
 export async function addBookAndAuthor(book) {
   try {
     const docRef = await addDoc(collection(db, "books"), book);
     console.log("Book added with ID:", docRef.id);
-
     await addAuthorToFirestore(book.author);
   } catch (e) {
     console.error("Error adding book & author:", e);
   }
+}
+
+// ==========================================
+// 7. Firestore helper functions (USERS)
+// ==========================================
+export async function getUserData(uid) {
+  try {
+    const userRef = doc(db, "users", uid);
+    const userSnap = await getDoc(userRef);
+
+    if (userSnap.exists()) {
+      return userSnap.data();
+    } else {
+      return null;
+    }
+  } catch (e) {
+    return null;
+  }
+}
+
+// ==========================================
+// 8. Auth helper functions
+// ==========================================
+export async function loginWithEmail(email, password) {
+  try {
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    console.log("User logged in:", userCredential.user.email);
+    return userCredential.user;
+  } catch (error) {
+    console.error("Login error:", error.message);
+    throw error;
+  }
+}
+
+export async function logoutUser() {
+  try {
+    await signOut(auth);
+    console.log("User logged out");
+  } catch (error) {
+    console.error("Logout error:", error.message);
+    throw error;
+  }
+}
+
+// ==========================================
+// 9. Optional: Listen to auth state changes
+// ==========================================
+export function onAuthChange(callback) {
+  onAuthStateChanged(auth, callback);
 }

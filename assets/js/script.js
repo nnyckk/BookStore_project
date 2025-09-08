@@ -6,6 +6,8 @@ import {
   onAuthorsChange,
   getAuthorsFromFirestore,
   addBookAndAuthor,
+  auth,
+  logoutUser
 } from "./firebase.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -563,4 +565,30 @@ document.addEventListener("DOMContentLoaded", async () => {
     suggestionBox.style.display = "none";
     selectedIndex = -1;
   }
+
+  const userBtn = document.querySelector(".user-btn");
+  const userDropdown = document.getElementById("userDropdown");
+  const userGreeting = document.getElementById("userGreeting");
+  const logoutBtn = document.getElementById("logoutBtn");
+
+  // Show dropdown
+  userBtn.addEventListener("click", () => {
+    userDropdown.classList.toggle("hidden");
+  });
+
+  // Set user info when page loads
+  auth.onAuthStateChanged((user) => {
+    if (user) {
+      userGreeting.textContent = `Hello, ${user.email}`;
+    } else {
+      // dacă nu e logat, poate redirect către login
+      window.location.href = "login.html";
+    }
+  });
+
+  // Logout button
+  logoutBtn.addEventListener("click", async () => {
+    await logoutUser();
+    window.location.href = "index.html";
+  });
 });

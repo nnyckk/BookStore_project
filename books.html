@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Book Manager</title>
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="assets/css/style.css" />
+    <link rel="stylesheet" href="assets/css/books.css" />
+  </head>
+
+  <body>
+    <section class="viewport">
+      <!-- ==============================
+           Sidebar / Menu
+      =============================== -->
+      <aside class="menu-container">
+        <!-- Logo -->
+        <img class="logo" src="assets/icons/sperantaperglogo.svg" alt="logo" />
+
+        <!-- Navigation Menu -->
+        <nav class="menu-list">
+          <!-- Library Button -->
+          <button class="btn menu-btn" title="Library">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="32"
+              width="32"
+              viewBox="0 -960 960 960"
+              fill="#3888bc"
+            >
+              <path
+                d="M300-80q-58 0-99-41t-41-99v-520q0-58 41-99t99-41h500v600q-25 0-42.5 17.5T740-220q0 25 17.5 42.5T800-160v80H300Zm-60-267q14-7 29-10t31-3h20v-440h-20q-25 0-42.5 17.5T240-740v393Zm160-13h320v-440H400v440Zm-160 13v-453 453Zm60 187h373q-6-14-9.5-28.5T660-220q0-16 3-31t10-29H300q-26 0-43 17.5T240-220q0 26 17 43t43 17Z"
+              />
+            </svg>
+          </button>
+
+          <!-- Add Book Button -->
+          <button class="btn menu-btn" id="addBook" title="Add book">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="32"
+              width="32"
+              viewBox="0 -960 960 960"
+              fill="#3888bc"
+            >
+              <path
+                d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"
+              />
+            </svg>
+          </button>
+
+          <div class="menu-separator"></div>
+
+          <!-- History Button -->
+          <button class="btn menu-btn" title="History">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="32"
+              width="32"
+              viewBox="0 -960 960 960"
+              fill="#3888bc"
+            >
+              <path
+                d="M480-120q-138 0-240.5-91.5T122-440h82q14 104 92.5 172T480-200q117 0 198.5-81.5T760-480q0-117-81.5-198.5T480-760q-69 0-129 32t-101 88h110v80H120v-240h80v94q51-64 124.5-99T480-840q75 0 140.5 28.5t114 77q48.5 48.5 77 114T840-480q0 75-28.5 140.5t-77 114q-48.5 48.5-114 77T480-120Zm112-192L440-464v-216h80v184l128 128-56 56Z"
+              />
+            </svg>
+          </button>
+        </nav>
+
+        <!-- User Profile Button -->
+        <div class="user">
+          <button class="btn user-btn" title="Profile">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="32"
+              width="32"
+              viewBox="0 -960 960 960"
+              fill="#3888bc"
+            >
+              <path
+                d="M234-276q51-39 114-61.5T480-360q69 0 132 22.5T726-276q35-41 54.5-93T800-480q0-133-93.5-226.5T480-800q-133 0-226.5 93.5T160-480q0 59 19.5 111t54.5 93Zm246-164q-59 0-99.5-40.5T340-580q0-59 40.5-99.5T480-720q59 0 99.5 40.5T620-580q0 59-40.5 99.5T480-440Zm0 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q53 0 100-15.5t86-44.5q-39-29-86-44.5T480-280q-53 0-100 15.5T294-220q39 29 86 44.5T480-160Zm0-360q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Z"
+              />
+            </svg>
+          </button>
+        </div>
+      </aside>
+
+      <!-- ==============================
+           Main Content
+      =============================== -->
+      <main class="playground-container">
+        <div class="container">
+          <!-- --------------------------
+               Search Bar
+          -------------------------- -->
+          <div class="search-bar">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="36"
+              width="36"
+              viewBox="0 -960 960 960"
+              fill="#3888bc"
+            >
+              <path
+                d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z"
+              />
+            </svg>
+            <input
+              id="searchInput"
+              type="text"
+              placeholder="Search by Title, Author or ISBN..."
+            />
+            <!-- Book Counter -->
+            <span id="bookCount" class="book-count">0 Books</span>
+          </div>
+
+          <!-- --------------------------
+               Table
+          -------------------------- -->
+          <div class="table-box">
+            <table id="bookTable">
+              <thead>
+                <tr>
+                  <th id="titleHeader">
+                    Title
+                    <span class="sort-arrow" id="titleArrow" title="Sort">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        height="30px"
+                        width="30px"
+                        viewBox="0 -960 960 960"
+                        fill="#3888bc"
+                      >
+                        <path d="M480-360 280-560h400L480-360Z" />
+                      </svg>
+                    </span>
+                  </th>
+                  <th id="authorHeader">
+                    Author
+                    <span class="sort-arrow" id="authorArrow" title="Sort">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        height="30px"
+                        width="30px"
+                        viewBox="0 -960 960 960"
+                        fill="#3888bc"
+                      >
+                        <path d="M480-360 280-560h400L480-360Z" />
+                      </svg>
+                    </span>
+                  </th>
+                  <th>Stock</th>
+                  <th id="priceHeader">
+                    Price (€)
+                    <span
+                      class="price-filter"
+                      id="priceArrow"
+                      title="Price Filter"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        height="32px"
+                        width="32px"
+                        viewBox="0 -960 960 960"
+                        fill="#3888bc"
+                      >
+                        <path
+                          d="M400-240v-80h160v80H400ZM240-440v-80h480v80H240ZM120-640v-80h720v80H120Z"
+                        />
+                      </svg>
+                    </span>
+
+                    <!-- Price Filter Panel -->
+                    <div id="priceFilter">
+                      <input
+                        type="number"
+                        id="minPrice"
+                        placeholder="Min Price"
+                      />
+                      <input
+                        type="number"
+                        id="maxPrice"
+                        placeholder="Max Price"
+                      />
+                      <div class="price-filter-buttons">
+                        <button id="applyPriceFilter" class="btn">Apply</button>
+                        <button id="resetPriceFilter" class="btn">Reset</button>
+                      </div>
+                    </div>
+                  </th>
+                  <th>ISBN</th>
+                </tr>
+              </thead>
+
+              <tbody id="tableBody">
+                <!-- JS will generate rows here -->
+              </tbody>
+            </table>
+
+            <!-- Overlay when no data is available -->
+            <div id="noDataOverlay" class="no-data">Nu există date</div>
+          </div>
+        </div>
+      </main>
+
+      <!-- ==============================
+           Add Book Modal
+      =============================== -->
+      <div id="addBookModal" class="modal">
+        <div class="modal-content">
+          <span class="close">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="24px"
+              width="24px"
+              viewBox="0 -960 960 960"
+              fill="#3888bc"
+            >
+              <path
+                d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"
+              />
+            </svg>
+          </span>
+
+          <h2>Add a book</h2>
+
+          <form id="addBookForm">
+            <label for="bookTitle">Title</label>
+            <input type="text" id="bookTitle" />
+            <label for="bookAuthor">Author</label>
+            <div class="input-wrapper" style="position: relative; width: 100%">
+              <input type="text" id="bookAuthor" />
+              <!-- Autocomplete -->
+              <div
+                id="authorSuggestions"
+                class="autocomplete-suggestions"
+              ></div>
+            </div>
+
+            <label for="bookStock">Stock</label>
+            <input type="number" id="bookStock" />
+            <label for="bookPrice">Price (€)</label>
+            <input type="text" id="bookPrice" />
+            <label for="bookIsbn">ISBN</label>
+            <input type="text" id="bookIsbn" />
+
+            <!-- Error message -->
+            <div id="addError"></div>
+
+            <button type="submit" class="btn save-btn">Add book</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- ==============================
+           Sell Book Modal
+      =============================== -->
+      <div id="sellBookModal" class="modal">
+        <div class="modal-content">
+          <span class="close sell-close">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="24px"
+              width="24px"
+              viewBox="0 -960 960 960"
+              fill="#3888bc"
+            >
+              <path
+                d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"
+              />
+            </svg>
+          </span>
+
+          <h2>Sell Book</h2>
+
+          <!-- Book Info Display -->
+          <div class="book-info">
+            <div class="info-row">
+              <span class="info-label">Title:</span>
+              <span id="sellBookTitle" class="info-value"></span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Author:</span>
+              <span id="sellBookAuthor" class="info-value"></span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Stock:</span>
+              <span id="sellBookStock" class="info-value"></span>
+            </div>
+          </div>
+
+          <hr class="separator" />
+
+          <form id="sellBookForm" novalidate>
+            <label for="sellQuantity">Quantity</label>
+            <input type="number" id="sellQuantity" min="1" step="1" />
+
+            <label for="sellNotes">Notes</label>
+            <textarea id="sellNotes" placeholder="Optional..."></textarea>
+
+            <!-- Error message -->
+            <div id="sellError"></div>
+
+            <button type="submit" class="btn save-btn">Sell book</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- ==============================
+           Success Popup
+      =============================== -->
+      <div id="successPopup" class="popup">Succes Sell</div>
+    </section>
+
+    <!-- User Dropdown -->
+    <div id="userDropdown" class="user-dropdown hidden">
+      <p id="userGreeting">Hello, User</p>
+      <button id="logoutBtn" class="btn">Log Out</button>
+    </div>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <span>BookStore v3.0</span>
+    </footer>
+
+    <!-- ==============================
+         JS Scripts
+    =============================== -->
+    <script type="module" src="assets/js/firebase.js"></script>
+    <script type="module" src="assets/js/script.js"></script>
+  </body>
+</html>

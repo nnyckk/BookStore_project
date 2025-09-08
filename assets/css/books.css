@@ -62,13 +62,6 @@
 /* ---------------------------------------------
    Buttons (Menu / User / General)
 --------------------------------------------- */
-.btn {
-  border: none;
-  cursor: pointer;
-  transition: 0.2s ease-in-out;
-  font-weight: 500;
-  font-size: 0.85rem;
-}
 
 .menu-btn,
 .user-btn {
@@ -653,4 +646,28 @@ textarea.invalid {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+.user-dropdown {
+  position: absolute;
+  top: 60px; /* ajustează după nevoie */
+  right: 10px;
+  background-color: var(--neutral-50);
+  border-radius: var(--border-default);
+  padding: 1rem;
+  box-shadow: 0 0.375rem 1rem rgba(0,0,0,0.15);
+  z-index: 1000;
+}
+
+.user-dropdown.hidden {
+  display: none;
+}
+
+.user-dropdown p {
+  margin: 0 0 0.5rem 0;
+  font-weight: 500;
+}
+
+.user-dropdown button {
+  width: 100%;
 }
