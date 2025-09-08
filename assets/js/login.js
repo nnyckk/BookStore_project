@@ -1,10 +1,21 @@
+// ==========================================
+// 1. Import helper functions from Firebase
+// ==========================================
 import { loginWithEmail, getUserData } from "./firebase.js";
 
+// ==========================================
+// 2. DOM Elements
+// ==========================================
 const loginForm = document.getElementById("loginForm");
 const loginEmail = document.getElementById("loginEmail");
 const loginPassword = document.getElementById("loginPassword");
 const logInError = document.getElementById("logInError");
+const togglePasswordBtn = document.querySelector(".toggle-password");
+const passwordInput = document.getElementById("loginPassword");
 
+// ==========================================
+// 3. Helper functions
+// ==========================================
 function showLoginError(input, message) {
   input.classList.add("invalid");
   logInError.textContent = message;
@@ -18,6 +29,9 @@ function clearLoginError() {
   logInError.textContent = "";
 }
 
+// ==========================================
+// 4. Form submission event
+// ==========================================
 loginForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   clearLoginError();
@@ -26,14 +40,13 @@ loginForm.addEventListener("submit", async (e) => {
   const password = loginPassword.value;
 
   if (!email) return showLoginError(loginEmail, "Please enter your email.");
-  if (!password)
-    return showLoginError(loginPassword, "Please enter your password.");
+  if (!password) return showLoginError(loginPassword, "Please enter your password.");
 
   try {
+    // Authenticate user
     const user = await loginWithEmail(email, password);
 
-    // ======== FETCH USER DATA FROM FIRESTORE =========
-    // users documents are keyed by uid
+    // Fetch user data from Firestore
     const userData = await getUserData(user.uid);
 
     if (!userData) {
@@ -46,6 +59,7 @@ loginForm.addEventListener("submit", async (e) => {
     sessionStorage.setItem("userRole", userData.role);
     sessionStorage.setItem("userEmail", userData.email);
 
+    // Redirect to main page
     window.location.href = "books.html";
   } catch (err) {
     showLoginError(loginEmail, "Incorrect email or password.");
@@ -54,9 +68,9 @@ loginForm.addEventListener("submit", async (e) => {
   }
 });
 
-const togglePasswordBtn = document.querySelector(".toggle-password");
-const passwordInput = document.getElementById("loginPassword");
-
+// ==========================================
+// 5. Toggle password visibility
+// ==========================================
 togglePasswordBtn.addEventListener("click", () => {
   const type = passwordInput.type === "password" ? "text" : "password";
   passwordInput.type = type;
