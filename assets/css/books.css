@@ -409,6 +409,12 @@ tbody tr:hover .sell-icon {
   color: var(--primary-900);
 }
 
+.modal-content p {
+  margin: 0.5rem 0;
+  font-size: var(--fs-body);
+  color: var(--text-light);
+}
+
 .modal-content label {
   display: block;
   margin: 0.625rem 0 0.3125rem;
@@ -634,6 +640,28 @@ textarea.invalid {
   cursor: default;
 }
 
+#userGreeting {
+  margin-bottom: 1.5rem;
+}
+
+.logout-btn {
+  width: 50%;
+  padding: 0.8rem 0.5rem;
+  margin: 3rem auto 0 auto;
+  font-size: var(--fs-body);
+  background-color: var(--error);
+  color: var(--text-dark);
+  border: none;
+  border-radius: var(--border-default);
+  cursor: pointer;
+  display: block;
+}
+
+.logout-btn:hover {
+  background-color: var(--error-hover);
+}
+
+
 /* ---------------------------------------------
    Keyframe Animations
 --------------------------------------------- */
@@ -646,28 +674,4 @@ textarea.invalid {
     opacity: 1;
     transform: translateY(0);
   }
-}
-
-.user-dropdown {
-  position: absolute;
-  top: 60px; /* ajustează după nevoie */
-  right: 10px;
-  background-color: var(--neutral-50);
-  border-radius: var(--border-default);
-  padding: 1rem;
-  box-shadow: 0 0.375rem 1rem rgba(0,0,0,0.15);
-  z-index: 1000;
-}
-
-.user-dropdown.hidden {
-  display: none;
-}
-
-.user-dropdown p {
-  margin: 0 0 0.5rem 0;
-  font-weight: 500;
-}
-
-.user-dropdown button {
-  width: 100%;
 }

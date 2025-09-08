@@ -308,20 +308,40 @@
       </div>
 
       <!-- ==============================
+            User Modal
+      =============================== -->
+      <div id="userModal" class="modal">
+        <div class="modal-content">
+          <span class="close" id="closeUserModal">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="24"
+              width="24"
+              viewBox="0 -960 960 960"
+              fill="#3888bc"
+            >
+              <path
+                d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"
+              />
+            </svg>
+          </span>
+
+          <h2 id="userGreeting">Hello, User</h2>
+          <p id="userEmail"></p>
+          <p id="userRoleDisplay"></p>
+          <button id="logoutBtn" class="btn logout-btn">Log Out</button>
+        </div>
+      </div>
+
+      <!-- ==============================
            Success Popup
       =============================== -->
       <div id="successPopup" class="popup">Succes Sell</div>
     </section>
 
-    <!-- User Dropdown -->
-    <div id="userDropdown" class="user-dropdown hidden">
-      <p id="userGreeting">Hello, User</p>
-      <button id="logoutBtn" class="btn">Log Out</button>
-    </div>
-
     <!-- Footer -->
     <footer class="app-footer">
-      <span>BookStore v3.0</span>
+      <span>BookStore v3.2</span>
     </footer>
 
     <!-- ==============================

@@ -7,7 +7,7 @@ import {
   getAuthorsFromFirestore,
   addBookAndAuthor,
   auth,
-  logoutUser
+  logoutUser,
 } from "./firebase.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -566,29 +566,49 @@ document.addEventListener("DOMContentLoaded", async () => {
     selectedIndex = -1;
   }
 
+  // =========================
+  // 14. User Modal & Logout
+  // =========================
   const userBtn = document.querySelector(".user-btn");
-  const userDropdown = document.getElementById("userDropdown");
+  const userModal = document.getElementById("userModal");
+  const closeUserModal = document.getElementById("closeUserModal");
   const userGreeting = document.getElementById("userGreeting");
+  const userEmailEl = document.getElementById("userEmail");
+  const userRoleDisplay = document.getElementById("userRoleDisplay");
   const logoutBtn = document.getElementById("logoutBtn");
 
-  // Show dropdown
+  const userName = sessionStorage.getItem("userName");
+  const userEmail = sessionStorage.getItem("userEmail");
+  const userRole = sessionStorage.getItem("userRole");
+
+  if (userName && userEmail) {
+    userGreeting.innerHTML = `Hello, <em>${userName}</em>`;
+    userEmailEl.innerHTML = `<strong>Email:</strong> ${userEmail}`;
+    userRoleDisplay.innerHTML = userRole
+      ? `<strong>Role:</strong> ${userRole}`
+      : "";
+  } else {
+    window.location.href = "login.html";
+  }
+
   userBtn.addEventListener("click", () => {
-    userDropdown.classList.toggle("hidden");
+    userModal.style.display = "flex";
   });
 
-  // Set user info when page loads
-  auth.onAuthStateChanged((user) => {
-    if (user) {
-      userGreeting.textContent = `Hello, ${user.email}`;
-    } else {
-      // dacă nu e logat, poate redirect către login
-      window.location.href = "login.html";
-    }
+  closeUserModal.addEventListener("click", () => {
+    userModal.style.display = "none";
   });
 
-  // Logout button
   logoutBtn.addEventListener("click", async () => {
+    sessionStorage.clear();
     await logoutUser();
     window.location.href = "index.html";
+  });
+
+  // Închid modalul dacă dai click pe fundal
+  window.addEventListener("click", (e) => {
+    if (e.target === userModal) {
+      userModal.style.display = "none";
+    }
   });
 });
