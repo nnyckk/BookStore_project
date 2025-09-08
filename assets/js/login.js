@@ -12,6 +12,9 @@ const loginPassword = document.getElementById("loginPassword");
 const logInError = document.getElementById("logInError");
 const togglePasswordBtn = document.querySelector(".toggle-password");
 const passwordInput = document.getElementById("loginPassword");
+const loginBtn = document.getElementById("loginBtn");
+const btnText = loginBtn.querySelector(".btn-text");
+const spinner = loginBtn.querySelector(".spinner");
 
 // ==========================================
 // 3. Helper functions
@@ -20,6 +23,7 @@ function showLoginError(input, message) {
   input.classList.add("invalid");
   logInError.textContent = message;
   logInError.style.display = "flex";
+  input.focus();
 }
 
 function clearLoginError() {
@@ -42,6 +46,11 @@ loginForm.addEventListener("submit", async (e) => {
   if (!email) return showLoginError(loginEmail, "Please enter your email.");
   if (!password) return showLoginError(loginPassword, "Please enter your password.");
 
+  // Show spinner & disable button
+  btnText.style.display = "none";
+  spinner.style.display = "inline-block";
+  loginBtn.disabled = true;
+
   try {
     // Authenticate user
     const user = await loginWithEmail(email, password);
@@ -50,8 +59,7 @@ loginForm.addEventListener("submit", async (e) => {
     const userData = await getUserData(user.uid);
 
     if (!userData) {
-      showLoginError(loginEmail, "User not found in database.");
-      return;
+      throw new Error("User not found in database.");
     }
 
     // Save user info in sessionStorage
@@ -62,9 +70,15 @@ loginForm.addEventListener("submit", async (e) => {
     // Redirect to main page
     window.location.href = "books.html";
   } catch (err) {
-    showLoginError(loginEmail, "Incorrect email or password.");
+    // Show any error (login failed, user not found etc.)
+    showLoginError(loginEmail, err.message);
     loginEmail.classList.add("invalid");
     loginPassword.classList.add("invalid");
+  } finally {
+    // Hide spinner & enable button
+    btnText.style.display = "inline-block";
+    spinner.style.display = "none";
+    loginBtn.disabled = false;
   }
 });
 

@@ -588,7 +588,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       ? `<strong>Role:</strong> ${userRole}`
       : "";
   } else {
-    window.location.href = "login.html";
+    window.location.href = "index.html";
   }
 
   userBtn.addEventListener("click", () => {

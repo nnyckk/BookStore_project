@@ -194,3 +194,20 @@ textarea.invalid {
     transform: translateY(0);
   }
 }
+
+.spinner {
+    display: none;
+    border: 2px solid transparent;
+    border-top: 2px solid var(--text-dark);
+    border-radius: 50%;
+    width: 1.5rem;
+    height: 1.5rem;
+    margin-left: 0.5rem;
+    vertical-align: middle;
+    animation: spin .8s linear infinite;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
