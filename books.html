@@ -9,10 +9,23 @@
     <link rel="stylesheet" href="assets/css/style.css" />
     <link rel="stylesheet" href="assets/css/books.css" />
     <!-- Favicons -->
-    <link rel="icon" type="image/png" href="assets/icons/favicons/favicon-96x96.png" sizes="96x96" />
-    <link rel="icon" type="image/svg+xml" href="assets/icons/favicons/favicon.svg" />
+    <link
+      rel="icon"
+      type="image/png"
+      href="assets/icons/favicons/favicon-96x96.png"
+      sizes="96x96"
+    />
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="assets/icons/favicons/favicon.svg"
+    />
     <link rel="shortcut icon" href="assets/icons/favicons/favicon.ico" />
-    <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/favicons/apple-touch-icon.png" />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="assets/icons/favicons/apple-touch-icon.png"
+    />
     <meta name="apple-mobile-web-app-title" content="Book Manager" />
     <link rel="manifest" href="assets/icons/favicons/site.webmanifest" />
   </head>
@@ -29,7 +42,7 @@
         <!-- Navigation Menu -->
         <nav class="menu-list">
           <!-- Library Button -->
-          <button class="btn menu-btn" title="Library">
+          <button class="btn menu-btn" title="Library" id="showLibraryTable">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               height="32"
@@ -43,6 +56,22 @@
             </svg>
           </button>
 
+          <!-- History Button -->
+          <button class="btn menu-btn" title="History" id="showHistoryTable">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="32"
+              width="32"
+              viewBox="0 -960 960 960"
+              fill="#3888bc"
+            >
+              <path
+                d="M480-120q-138 0-240.5-91.5T122-440h82q14 104 92.5 172T480-200q117 0 198.5-81.5T760-480q0-117-81.5-198.5T480-760q-69 0-129 32t-101 88h110v80H120v-240h80v94q51-64 124.5-99T480-840q75 0 140.5 28.5t114 77q48.5 48.5 77 114T840-480q0 75-28.5 140.5t-77 114q-48.5 48.5-114 77T480-120Zm112-192L440-464v-216h80v184l128 128-56 56Z"
+              />
+            </svg>
+          </button>
+
+          <div class="menu-separator"></div>
           <!-- Add Book Button -->
           <button class="btn menu-btn" id="addBook" title="Add book">
             <svg
@@ -54,23 +83,6 @@
             >
               <path
                 d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"
-              />
-            </svg>
-          </button>
-
-          <div class="menu-separator"></div>
-
-          <!-- History Button -->
-          <button class="btn menu-btn" title="History">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              height="32"
-              width="32"
-              viewBox="0 -960 960 960"
-              fill="#3888bc"
-            >
-              <path
-                d="M480-120q-138 0-240.5-91.5T122-440h82q14 104 92.5 172T480-200q117 0 198.5-81.5T760-480q0-117-81.5-198.5T480-760q-69 0-129 32t-101 88h110v80H120v-240h80v94q51-64 124.5-99T480-840q75 0 140.5 28.5t114 77q48.5 48.5 77 114T840-480q0 75-28.5 140.5t-77 114q-48.5 48.5-114 77T480-120Zm112-192L440-464v-216h80v184l128 128-56 56Z"
               />
             </svg>
           </button>
@@ -127,87 +139,119 @@
                Table
           -------------------------- -->
           <div class="table-box">
-            <table id="bookTable">
-              <thead>
-                <tr>
-                  <th id="titleHeader">
-                    Title
-                    <span class="sort-arrow" id="titleArrow" title="Sort">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        height="30px"
-                        width="30px"
-                        viewBox="0 -960 960 960"
-                        fill="#3888bc"
+            <div id="bookTableContainer" class="table-container">
+              
+              <table id="bookTable">
+                <thead>
+                  <tr>
+                    <th id="titleHeader">
+                      Title
+                      <span class="sort-arrow" id="titleArrow" title="Sort">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          height="30px"
+                          width="30px"
+                          viewBox="0 -960 960 960"
+                          fill="#3888bc"
+                        >
+                          <path d="M480-360 280-560h400L480-360Z" />
+                        </svg>
+                      </span>
+                    </th>
+                    <th id="authorHeader">
+                      Author
+                      <span class="sort-arrow" id="authorArrow" title="Sort">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          height="30px"
+                          width="30px"
+                          viewBox="0 -960 960 960"
+                          fill="#3888bc"
+                        >
+                          <path d="M480-360 280-560h400L480-360Z" />
+                        </svg>
+                      </span>
+                    </th>
+                    <th>Stock</th>
+                    <th id="priceHeader">
+                      Price (€)
+                      <span
+                        class="price-filter"
+                        id="priceArrow"
+                        title="Price Filter"
                       >
-                        <path d="M480-360 280-560h400L480-360Z" />
-                      </svg>
-                    </span>
-                  </th>
-                  <th id="authorHeader">
-                    Author
-                    <span class="sort-arrow" id="authorArrow" title="Sort">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        height="30px"
-                        width="30px"
-                        viewBox="0 -960 960 960"
-                        fill="#3888bc"
-                      >
-                        <path d="M480-360 280-560h400L480-360Z" />
-                      </svg>
-                    </span>
-                  </th>
-                  <th>Stock</th>
-                  <th id="priceHeader">
-                    Price (€)
-                    <span
-                      class="price-filter"
-                      id="priceArrow"
-                      title="Price Filter"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        height="32px"
-                        width="32px"
-                        viewBox="0 -960 960 960"
-                        fill="#3888bc"
-                      >
-                        <path
-                          d="M400-240v-80h160v80H400ZM240-440v-80h480v80H240ZM120-640v-80h720v80H120Z"
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          height="32px"
+                          width="32px"
+                          viewBox="0 -960 960 960"
+                          fill="#3888bc"
+                        >
+                          <path
+                            d="M400-240v-80h160v80H400ZM240-440v-80h480v80H240ZM120-640v-80h720v80H120Z"
+                          />
+                        </svg>
+                      </span>
+
+                      <!-- Price Filter Panel -->
+                      <div id="priceFilter">
+                        <input
+                          type="number"
+                          id="minPrice"
+                          placeholder="Min Price"
                         />
-                      </svg>
-                    </span>
-
-                    <!-- Price Filter Panel -->
-                    <div id="priceFilter">
-                      <input
-                        type="number"
-                        id="minPrice"
-                        placeholder="Min Price"
-                      />
-                      <input
-                        type="number"
-                        id="maxPrice"
-                        placeholder="Max Price"
-                      />
-                      <div class="price-filter-buttons">
-                        <button id="applyPriceFilter" class="btn">Apply</button>
-                        <button id="resetPriceFilter" class="btn">Reset</button>
+                        <input
+                          type="number"
+                          id="maxPrice"
+                          placeholder="Max Price"
+                        />
+                        <div class="price-filter-buttons">
+                          <button id="applyPriceFilter" class="btn">
+                            Apply
+                          </button>
+                          <button id="resetPriceFilter" class="btn">
+                            Reset
+                          </button>
+                        </div>
                       </div>
-                    </div>
-                  </th>
-                  <th>ISBN</th>
-                </tr>
-              </thead>
+                    </th>
+                    <th>ISBN</th>
+                  </tr>
+                </thead>
 
-              <tbody id="tableBody">
-                <!-- JS will generate rows here -->
-              </tbody>
-            </table>
+                <tbody id="tableBody">
+                  <!-- JS will generate rows here -->
+                </tbody>
+              </table>
 
-            <!-- Overlay when no data is available -->
-            <div id="noDataOverlay" class="no-data">Nu există date</div>
+              <div id="booksSpinner" class="spinner"></div>
+              <!-- Overlay when no data is available -->
+              <div id="noDataOverlay" class="no-data">Nu există date</div>
+            </div>
+            <!-- Hostory Table -->
+            <div id="historyTableContainer" class="table-container">
+              <table id="historyTable">
+                <thead>
+                  <tr>
+                    <th class="history-th">Action</th>
+                    <th class="history-th">Book</th>
+                    <th class="history-th">User</th>
+                    <th class="history-th">Quantity</th>
+                    <th class="history-th">Notes</th>
+                    <th class="history-th">Date/Time</th>
+                  </tr>
+                </thead>
+                <tbody id="historyTableBody">
+                  <!-- JS will generate rows here -->
+                </tbody>
+              </table>
+
+              <div id="historySpinner" class="spinner"></div>
+              <!-- Overlay when no history is available -->
+              <div id="noHistoryOverlay" class="no-data history-no-data" style="display: flex;">
+                No history available (Work in progress)
+              </div>
+            </div>
           </div>
         </div>
       </main>
@@ -349,7 +393,7 @@
 
     <!-- Footer -->
     <footer class="app-footer">
-      <span>BookStore v3.5.1</span>
+      <span>BookStore v3.7</span>
     </footer>
 
     <!-- ==============================

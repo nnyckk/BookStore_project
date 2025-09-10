@@ -13,8 +13,10 @@ import {
   doc,
   onSnapshot,
   query,
+  orderBy,
   where,
   getDoc,
+  serverTimestamp,
 } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
 import {
@@ -135,4 +137,100 @@ export async function logoutUser() {
 
 export function onAuthChange(callback) {
   onAuthStateChanged(auth, callback);
+}
+
+// ==========================================
+// 8. Firestore helper functions (History)
+// ==========================================
+export async function addHistoryEntry(entry) {
+  await addDoc(collection(db, "history"), {
+    ...entry,
+    timestamp: serverTimestamp(),
+  });
+}
+
+export function onHistoryChange(callback) {
+  const historyCol = collection(db, "history");
+  const q = query(historyCol, orderBy("timestamp", "desc"));
+  return onSnapshot(q, (snapshot) => {
+    const history = snapshot.docs.map((docSnap) => ({
+      id: docSnap.id,
+      ...docSnap.data(),
+    }));
+    callback(history);
+  });
+}
+
+export async function logHistory({
+  action,
+  book,
+  user,
+  quantity = null,
+  notes = "",
+}) {
+  await addHistoryEntry({
+    action,
+    book,
+    user,
+    quantity,
+    notes,
+  });
+}
+
+// =================================
+// Wrapper pentru adăugare carte
+// =================================
+export async function addBook(book, user) {
+  // adaugă cartea în Firestore
+  await addBookToFirestore(book);
+
+  // loghează acțiunea în istoric
+  await logHistory({
+    action: "Added Book",
+    book: book.title,
+    user: user.displayName, // doar numele
+    quantity: 1,
+    notes: "", // gol
+  });
+}
+
+async function editBook(bookId, updatedData, user) {
+  await updateBookInFirestore(bookId, updatedData);
+  await logHistory({
+    action: "Edited Book",
+    book: updatedData.title || "Unknown",
+    user: user.displayName, // doar numele
+    notes: "", // gol
+  });
+}
+
+async function deleteBook(bookId, bookTitle, user) {
+  await deleteDoc(doc(db, "books", bookId));
+  await logHistory({
+    action: "Deleted Book",
+    book: bookTitle,
+    user: user.displayName, // doar numele
+    notes: "", // gol
+  });
+}
+
+async function sellBook(bookId, bookTitle, quantitySold, user, notes = "") {
+  // 1. Actualizează stocul
+  const bookRef = doc(db, "books", bookId);
+  const bookSnap = await getDoc(bookRef);
+  if (bookSnap.exists()) {
+    const currentQty = bookSnap.data().quantity || 0;
+    await updateBookInFirestore(bookId, {
+      quantity: currentQty - quantitySold,
+    });
+  }
+
+  // 2. Adaugă în istoric
+  await logHistory({
+    action: "Sold Book",
+    book: bookTitle,
+    user: user.displayName, // doar numele
+    quantity: quantitySold,
+    notes, // notița introdusă de user
+  });
 }

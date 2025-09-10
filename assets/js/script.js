@@ -8,6 +8,8 @@ import {
   addBookAndAuthor,
   auth,
   logoutUser,
+  onHistoryChange,
+  addHistoryEntry,
 } from "./firebase.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -66,6 +68,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   // 4. BOOKS LOADING
   // =========================
   function loadBooks() {
+    const booksSpinner = document.getElementById("booksSpinner");
+    booksSpinner.style.display = "block"; // Show loading
+
     // Listen to real-time updates from Firestore
     onBooksChange((updatedBooks) => {
       books = updatedBooks;
@@ -82,6 +87,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       updateNoDataOverlay(books);
       updateBookCount(books);
+
+      booksSpinner.style.display = "none"; // Hide loading
     });
   }
 
@@ -90,6 +97,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   // =========================
   function renderTable(filteredBooks = null) {
     const list = filteredBooks || books;
+    const booksSpinner = document.getElementById("booksSpinner");
+
+    // Show loading
+    booksSpinner.style.display = "block";
     tableBody.innerHTML = "";
 
     list.forEach((book) => {
@@ -103,15 +114,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         <td class="has-icon">
           ${book.isbn}
           <span class="edit-icon" data-id="${book.id}" title="Edit">
-              <svg xmlns="http://www.w3.org/2000/svg" height="28px" viewBox="0 -960 960 960" width="28px" fill="#3888bc">
-                <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h357l-80 80H200v560h560v-278l80-80v358q0 33-23.5 56.5T760-120H200Zm280-360ZM360-360v-170l367-367q12-12 27-18t30-6q16 0 30.5 6t26.5 18l56 57q11 12 17 26.5t6 29.5q0 15-5.5 29.5T897-728L530-360H360Zm481-424-56-56 56 56ZM440-440h56l232-232-28-28-29-28-231 231v57Zm260-260-29-28 29 28 28 28-28-28Z"/>
-              </svg>
-            </span>
-            <span class="sell-icon" data-id="${book.id}" title="Sell">
-              <svg xmlns="http://www.w3.org/2000/svg" height="28px" viewBox="0 -960 960 960" width="28px" fill="#3888bc">
-                <path d="M280-80q-33 0-56.5-23.5T200-160q0-33 23.5-56.5T280-240q33 0 56.5 23.5T360-160q0 33-23.5 56.5T280-80Zm400 0q-33 0-56.5-23.5T600-160q0-33 23.5-56.5T680-240q33 0 56.5 23.5T760-160q0 33-23.5 56.5T680-80ZM246-720l96 200h280l110-200H246Zm-38-80h590q23 0 35 20.5t1 41.5L692-482q-11 20-29.5 31T622-440H324l-44 80h480v80H280q-45 0-68-39.5t-2-78.5l54-98-144-304H40v-80h130l38 80Zm134 280h280-280Z"/>
-              </svg>
-            </span>
+            <svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 -960 960 960" width="30px" fill="#3888bc"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h357l-80 80H200v560h560v-278l80-80v358q0 33-23.5 56.5T760-120H200Zm280-360ZM360-360v-170l367-367q12-12 27-18t30-6q16 0 30.5 6t26.5 18l56 57q11 12 17 26.5t6 29.5q0 15-5.5 29.5T897-728L530-360H360Zm481-424-56-56 56 56ZM440-440h56l232-232-28-28-29-28-231 231v57Zm260-260-29-28 29 28 28 28-28-28Z"/></svg>
+          </span>
+          <span class="sell-icon" data-id="${book.id}" title="Sell">
+            <svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 -960 960 960" width="30px" fill="#3888bc"><path d="M280-80q-33 0-56.5-23.5T200-160q0-33 23.5-56.5T280-240q33 0 56.5 23.5T360-160q0 33-23.5 56.5T280-80Zm400 0q-33 0-56.5-23.5T600-160q0-33 23.5-56.5T680-240q33 0 56.5 23.5T760-160q0 33-23.5 56.5T680-80ZM246-720l96 200h280l110-200H246Zm-38-80h590q23 0 35 20.5t1 41.5L692-482q-11 20-29.5 31T622-440H324l-44 80h480v80H280q-45 0-68-39.5t-2-78.5l54-98-144-304H40v-80h130l38 80Zm134 280h280-280Z"/></svg>
+          </span>
         </td>
       `;
 
@@ -126,6 +133,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     updateRowColors();
     updateSellIcons();
+
+    // Hide loading
+    booksSpinner.style.display = "none";
   }
 
   // =========================
@@ -188,6 +198,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   // =========================
   function openAddBookModal(isEdit = false) {
     addBookModal.style.display = "flex";
+    openAddBookBtn.classList.add("active");
+
     const modalTitle = addBookModal.querySelector("h2");
     const saveBtn = addBookForm.querySelector(".save-btn");
 
@@ -204,6 +216,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   function closeAddBookModal() {
     addBookModal.style.display = "none";
+    openAddBookBtn.classList.remove("active");
 
     // Reset error messages and invalid classes
     addError.style.display = "none";
@@ -593,10 +606,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   userBtn.addEventListener("click", () => {
     userModal.style.display = "flex";
+    userBtn.classList.add("active");
   });
 
   closeUserModal.addEventListener("click", () => {
     userModal.style.display = "none";
+    userBtn.classList.remove("active");
   });
 
   logoutBtn.addEventListener("click", async () => {
@@ -608,6 +623,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   window.addEventListener("click", (e) => {
     if (e.target === userModal) {
       userModal.style.display = "none";
+      userBtn.classList.remove("active");
     }
   });
 
@@ -648,4 +664,95 @@ document.addEventListener("DOMContentLoaded", async () => {
     updateLastActivity();
     startLogoutTimer();
   }
+
+  // ==========================================
+  // Book and History Buttons
+  // ==========================================
+
+  const libraryBtn = document.getElementById("showLibraryTable");
+  const historyBtn = document.getElementById("showHistoryTable");
+
+  const bookTableContainer = document.getElementById("bookTableContainer");
+  const historyTableContainer = document.getElementById(
+    "historyTableContainer"
+  );
+
+  function showBookTable() {
+    bookTableContainer.style.display = "block";
+    historyTableContainer.style.display = "none";
+    libraryBtn.classList.add("active");
+    historyBtn.classList.remove("active");
+    sessionStorage.setItem("activeTab", "books");
+  }
+
+  function showHistoryTable() {
+    bookTableContainer.style.display = "none";
+    historyTableContainer.style.display = "block";
+    historyBtn.classList.add("active");
+    libraryBtn.classList.remove("active");
+    sessionStorage.setItem("activeTab", "history");
+
+    loadHistory();
+  }
+
+  // Event listeners
+  libraryBtn.addEventListener("click", showBookTable);
+  historyBtn.addEventListener("click", showHistoryTable);
+
+  // Local Storage initialization
+  const activeTab = sessionStorage.getItem("activeTab");
+  if (activeTab === "history") {
+    showHistoryTable();
+  } else {
+    showBookTable();
+  }
+
+  // =========================
+  // HISTORY LOADING & RENDER
+  // =========================
+  const historyTableBody = document.getElementById("historyTableBody");
+  const noHistoryOverlay = document.getElementById("noHistoryOverlay");
+  const historySpinner = document.getElementById("historySpinner"); // sau creează un spinner separat pentru istoric
+
+  function loadHistory() {
+    historySpinner.style.display = "flex"; // arată spinnerul
+
+    onHistoryChange((historyList) => {
+      historySpinner.style.display = "none"; // ascunde spinnerul
+
+      if (!historyList.length) {
+        noHistoryOverlay.style.display = "flex";
+        historyTableBody.innerHTML = "";
+        return;
+      }
+
+      noHistoryOverlay.style.display = "none";
+      renderHistory(historyList);
+    });
+  }
+
+  function renderHistory(historyList) {
+    historyTableBody.innerHTML = "";
+
+    historyList.forEach((entry) => {
+      const date = entry.timestamp?.toDate
+        ? entry.timestamp.toDate().toLocaleString()
+        : "N/A";
+
+      const row = document.createElement("tr");
+      row.innerHTML = `
+      <td>${entry.action || "-"}</td>
+      <td>${entry.book || "-"}</td>
+      <td>${entry.user || "-"}</td>
+      <td>${entry.quantity ?? "-"}</td>
+      <td>${entry.notes || "-"}</td>
+      <td>${date}</td>
+    `;
+      historyTableBody.appendChild(row);
+    });
+    updateRowColors();
+  }
+
+  // Apelează loadHistory când se încarcă pagina
+  loadHistory();
 });

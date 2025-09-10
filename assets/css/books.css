@@ -1,4 +1,3 @@
-
 /* ---------------------------------------------
    Main Layout
 --------------------------------------------- */
@@ -62,6 +61,29 @@
 /* ---------------------------------------------
    Buttons (Menu / User / General)
 --------------------------------------------- */
+#addBook.active,
+.user-btn.active {
+  background-color: var(--neutral-50);
+}
+#addBook.active svg,
+.user-btn.active svg {
+  fill: var(--warning);
+}
+
+#showLibraryTable.active,
+#showHistoryTable.active {
+  background-color: var(--neutral-50);
+  border-radius: var(--border-default);
+}
+#showLibraryTable.active svg,
+#showHistoryTable.active svg {
+  fill: var(--warning);
+}
+#showLibraryTable.active:hover,
+#showHistoryTable.active:hover {
+  background-color: var(--neutral-50);
+  border-radius: var(--border-default);
+}
 
 .menu-btn,
 .user-btn {
@@ -69,19 +91,19 @@
   justify-content: center;
   align-items: center;
   background-color: transparent;
-  border-radius: var(--border-circle);
+  border-radius: var(--border-default);
   padding: 0.5rem;
 }
 
 .menu-btn svg,
 .user-btn svg {
-  fill: var(--primary-50);
-  transition: 0.3s;
+  fill: var(--neutral-50);
+  transition: 0.3s, width 0.3s;
 }
 
 .menu-btn:hover,
 .user-btn:hover {
-  background-color: var(--primary-50);
+  background-color: var(--neutral-50);
 }
 
 .menu-btn:hover svg,
@@ -131,11 +153,17 @@
   border-top: none;
   border-radius: 0 0 0.375rem 0.375rem;
   box-shadow: rgba(17, 17, 26, 0.05) 0 0.0625rem 0,
-              rgba(17, 17, 26, 0.1) 0 0 0.5rem;
+    rgba(17, 17, 26, 0.1) 0 0 0.5rem;
 }
 
 .table-wrapper {
   position: relative; /* For overlays like no-data message */
+}
+
+.table-container {
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
 }
 
 /* ---------------------------------------------
@@ -158,7 +186,7 @@ thead {
 
 th {
   padding: 0.75rem 2rem;
-  font-size: .9rem;
+  font-size: 0.9rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.1em;
@@ -245,7 +273,7 @@ tbody tr:nth-child(even) {
 }
 
 .edit-icon {
-  right: 3.5rem;
+  right: 3.8rem;
 }
 
 .sell-icon {
@@ -288,12 +316,13 @@ tbody tr:hover .sell-icon {
 
 .sort-arrow {
   position: absolute;
-  top: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .price-filter {
   position: absolute;
-  top: 0.4rem;
+  top: 0.25rem;
   margin-left: 0.5rem;
   cursor: pointer;
 }
@@ -311,6 +340,10 @@ tbody tr:hover .sell-icon {
 /* ---------------------------------------------
    Price Filter Container
 --------------------------------------------- */
+/* #priceHeader {
+  position: relative;
+} */
+
 #priceFilter {
   display: none;
   position: absolute;
@@ -323,7 +356,7 @@ tbody tr:hover .sell-icon {
   border: 0.0625rem solid var(--neutral-100);
   border-radius: var(--border-default);
   z-index: 9999;
-  box-shadow: rgba(0,0,0,0.15) 0 0.3rem 0.6rem;
+  box-shadow: rgba(0, 0, 0, 0.15) 0 0.3rem 0.6rem;
   animation: fadeIn 0.2s ease;
 }
 
@@ -385,7 +418,7 @@ tbody tr:hover .sell-icon {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0,0,0,0.5);
+  background-color: rgba(0, 0, 0, 0.5);
   z-index: 1000;
   align-items: center;
   justify-content: center;
@@ -398,7 +431,7 @@ tbody tr:hover .sell-icon {
   border-radius: var(--border-default);
   width: 30rem;
   max-width: 90%;
-  box-shadow: 0 0.375rem 1.25rem rgba(0,0,0,0.2);
+  box-shadow: 0 0.375rem 1.25rem rgba(0, 0, 0, 0.2);
   animation: fadeIn 0.3s ease;
 }
 
@@ -476,20 +509,20 @@ tbody tr:hover .sell-icon {
 }
 
 #authorSuggestions {
-  position: absolute; 
+  position: absolute;
   background: var(--neutral-50);
   border: 0.0625rem solid var(--neutral-300);
   border-radius: var(--border-default);
   max-height: 150px;
   overflow-y: auto;
   width: 100%;
-  box-shadow: 0 0.375rem 1.25rem rgba(0,0,0,0.2);
+  box-shadow: 0 0.375rem 1.25rem rgba(0, 0, 0, 0.2);
   z-index: 1000;
   display: none;
 }
 
 .suggestion-item {
-  padding: .5em .7em;
+  padding: 0.5em 0.7em;
   cursor: pointer;
 }
 /* Hover effect */
@@ -499,7 +532,6 @@ tbody tr:hover .sell-icon {
 .suggestion-item.highlight {
   background-color: var(--primary-100);
 }
-
 
 /* Input error styling */
 input.invalid,
@@ -583,7 +615,6 @@ textarea.invalid {
   pointer-events: auto;
 }
 
-
 .stock-low {
   color: var(--warning); /* pentru stoc < 3 */
 }
@@ -661,7 +692,6 @@ textarea.invalid {
   background-color: var(--error-hover);
 }
 
-
 /* ---------------------------------------------
    Keyframe Animations
 --------------------------------------------- */
@@ -673,5 +703,29 @@ textarea.invalid {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+.spinner {
+  display: flex;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  border: 4px solid transparent;
+  border-top: 4px solid var(--neutral-900);
+  border-radius: 50%;
+  width: 4rem;
+  height: 4rem;
+  animation: spin 0.5s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
   }
 }
