@@ -69,6 +69,9 @@
 .user-btn.active svg {
   fill: var(--warning);
 }
+#addBook:hover svg {
+  transform: rotate(.25turn) scale(1.2);
+}
 
 #showLibraryTable.active,
 #showHistoryTable.active {
@@ -203,11 +206,16 @@ tbody tr {
   position: relative;
 }
 
-tbody tr:nth-child(even) {
+/* tbody tr:nth-child(even) {
   background-color: var(--primary-50);
-}
+} */
 
 #bookTable tbody tr:hover {
+  background-color: var(--primary-100) !important;
+  transition: 0.15s;
+}
+
+#historyTable tbody tr:hover {
   background-color: var(--primary-100) !important;
   transition: 0.15s;
 }
@@ -217,7 +225,7 @@ tbody tr:nth-child(even) {
 --------------------------------------------- */
 #bookTable th:nth-child(1),
 #bookTable td:nth-child(1) {
-  max-width: 12rem;
+  max-width: 15rem;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -239,15 +247,73 @@ tbody tr:nth-child(even) {
   white-space: nowrap;
 }
 
-#bookTable th:nth-child(3),
 #bookTable td:nth-child(3),
 #bookTable td:nth-child(4) {
-  text-align: right;
+  text-align: center;
 }
 
 #bookTable th:nth-child(4),
 #bookTable td:nth-child(4) {
-  max-width: 5.5rem;
+  width: 1rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+#bookTable th:nth-child(5),
+#bookTable td:nth-child(5) {
+  max-width: 10rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#historyTable th:nth-child(1),
+#historyTable td:nth-child(1) {
+  max-width: 8rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#historyTable th:nth-child(2),
+#historyTable td:nth-child(2) {
+  max-width: 20rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#historyTable th:nth-child(3),
+#historyTable td:nth-child(3) {
+  width: 1rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#historyTable td:nth-child(4) {
+  text-align: center;
+}
+
+#historyTable th:nth-child(4),
+#historyTable td:nth-child(4) {
+  width: 1rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#historyTable th:nth-child(5),
+#historyTable td:nth-child(5) {
+  max-width: 20rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#historyTable th:nth-child(6),
+#historyTable td:nth-child(6) {
+  width: 1rem;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -708,7 +774,7 @@ textarea.invalid {
 
 .spinner {
   display: flex;
-  position: absolute;
+  position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -728,4 +794,40 @@ textarea.invalid {
   100% {
     transform: rotate(360deg);
   }
+}
+
+.load-more-btn {
+  width: 10%;
+  margin: 1rem auto 0 auto; 
+  padding: .5rem 1rem;
+  background-color: var(--primary-500);
+  color: var(--text-dark);
+  border: none;
+  border-radius: var(--border-default);
+  cursor: pointer;
+  font-size: var(--fs-body);
+  font-weight: 500;
+  transition: all 0.2s ease;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1);
+  display: block;
+}
+
+.load-more-btn:hover {
+  background-color: var(--primary-600);
+  box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.15);
+}
+.load-more-btn:active {
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1);
+}
+.load-more-btn:disabled {
+  background-color: var(--neutral-100);
+  color: var(--neutral-600);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+.load-more-btn:disabled:hover {
+  background-color: var(--neutral-100);
+  transform: none;
+  box-shadow: none;
 }

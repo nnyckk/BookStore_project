@@ -88,7 +88,7 @@ html {
   --neutral-600: hsl(220, 23%, 30%);
   --neutral-700: hsl(220, 23%, 20%);
   --neutral-800: hsl(220, 23%, 12%);
-  --neutral-900: hsl(220, 23%, 7%); /* Dark BG */
+  --neutral-900: hsl(225, 22%, 7%); /* Dark BG */
 
   /* 🟢 Semantic Colors */
   --success: hsl(145, 45%, 45%);

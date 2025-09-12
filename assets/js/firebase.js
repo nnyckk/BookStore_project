@@ -17,6 +17,11 @@ import {
   where,
   getDoc,
   serverTimestamp,
+  deleteDoc,
+  limit,
+  startAfter,
+  Timestamp,
+  writeBatch,
 } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
 import {
@@ -68,6 +73,11 @@ export function onBooksChange(callback) {
 export async function updateBookInFirestore(bookId, updatedData) {
   const bookRef = doc(db, "books", bookId);
   await updateDoc(bookRef, updatedData);
+}
+
+export async function deleteBookFromFirestore(bookId) {
+  const bookRef = doc(db, "books", bookId);
+  await deleteDoc(bookRef);
 }
 
 // ==========================================
@@ -140,7 +150,7 @@ export function onAuthChange(callback) {
 }
 
 // ==========================================
-// 8. Firestore helper functions (History)
+// 8. Firestore helper functions (History) - OPTIMIZAT
 // ==========================================
 export async function addHistoryEntry(entry) {
   await addDoc(collection(db, "history"), {
@@ -149,16 +159,137 @@ export async function addHistoryEntry(entry) {
   });
 }
 
-export function onHistoryChange(callback) {
+// NOUA FUNCȚIE - Încarcă istoric cu paginare (lazy loading)
+export async function loadHistoryPage(pageSize = 20, lastDoc = null) {
   const historyCol = collection(db, "history");
-  const q = query(historyCol, orderBy("timestamp", "desc"));
+  
+  let q;
+  if (lastDoc) {
+    // Pentru paginile următoare
+    q = query(
+      historyCol,
+      orderBy("timestamp", "desc"),
+      startAfter(lastDoc),
+      limit(pageSize)
+    );
+  } else {
+    // Pentru prima pagină
+    q = query(
+      historyCol,
+      orderBy("timestamp", "desc"),
+      limit(pageSize)
+    );
+  }
+
+  const snapshot = await getDocs(q);
+  const history = snapshot.docs.map((docSnap) => ({
+    id: docSnap.id,
+    ...docSnap.data(),
+    _doc: docSnap, // Păstrăm referința pentru paginare
+  }));
+
+  return {
+    data: history,
+    lastDoc: snapshot.docs[snapshot.docs.length - 1] || null,
+    hasMore: snapshot.docs.length === pageSize,
+  };
+}
+
+// FUNCȚIE PENTRU REAL-TIME UPDATES DOAR PENTRU PRIMA PAGINĂ
+export function onHistoryChangeFirstPage(callback, pageSize = 20) {
+  const historyCol = collection(db, "history");
+  const q = query(historyCol, orderBy("timestamp", "desc"), limit(pageSize));
+  
   return onSnapshot(q, (snapshot) => {
     const history = snapshot.docs.map((docSnap) => ({
       id: docSnap.id,
       ...docSnap.data(),
+      _doc: docSnap,
     }));
-    callback(history);
+    callback({
+      data: history,
+      lastDoc: snapshot.docs[snapshot.docs.length - 1] || null,
+      hasMore: snapshot.docs.length === pageSize,
+    });
   });
+}
+
+// FUNCȚIE PENTRU CLEANUP - Șterge datele mai vechi de 3 luni
+export async function cleanupOldHistory() {
+  console.log("Starting history cleanup...");
+  
+  const threeMonthsAgo = new Date();
+  threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+  const threeMonthsAgoTimestamp = Timestamp.fromDate(threeMonthsAgo);
+  
+  const historyCol = collection(db, "history");
+  const oldEntriesQuery = query(
+    historyCol,
+    where("timestamp", "<=", threeMonthsAgoTimestamp),
+    limit(500) // Șterge în batches pentru a evita timeout-urile
+  );
+  
+  try {
+    const snapshot = await getDocs(oldEntriesQuery);
+    
+    if (snapshot.empty) {
+      console.log("No old entries to delete.");
+      return { deleted: 0, error: null };
+    }
+    
+    // Folosește batch write pentru eficiență
+    const batch = writeBatch(db);
+    snapshot.docs.forEach((doc) => {
+      batch.delete(doc.ref);
+    });
+    
+    await batch.commit();
+    
+    const deletedCount = snapshot.docs.length;
+    console.log(`Deleted ${deletedCount} old history entries.`);
+    
+    // Dacă am șters exact 500 (batch size), poate mai sunt altele
+    if (deletedCount === 500) {
+      console.log("More entries might exist, running cleanup again...");
+      // Rulează din nou recursiv
+      const nextResult = await cleanupOldHistory();
+      return { 
+        deleted: deletedCount + nextResult.deleted, 
+        error: nextResult.error 
+      };
+    }
+    
+    return { deleted: deletedCount, error: null };
+    
+  } catch (error) {
+    console.error("Error during cleanup:", error);
+    return { deleted: 0, error: error.message };
+  }
+}
+
+// FUNCȚIE PENTRU CLEANUP AUTOMAT - Rulează la pornirea aplicației
+export async function initAutoCleanup() {
+  const lastCleanupKey = "lastHistoryCleanup";
+  const lastCleanup = localStorage.getItem(lastCleanupKey);
+  const now = Date.now();
+  const oneWeek = 7 * 24 * 60 * 60 * 1000; // 7 zile în millisecunde
+  
+  // Rulează cleanup-ul o dată pe săptămână
+  if (!lastCleanup || (now - parseInt(lastCleanup)) > oneWeek) {
+    console.log("Running scheduled history cleanup...");
+    
+    try {
+      const result = await cleanupOldHistory();
+      if (result.error) {
+        console.error("Cleanup failed:", result.error);
+      } else {
+        console.log(`Cleanup successful: ${result.deleted} entries deleted.`);
+        localStorage.setItem(lastCleanupKey, now.toString());
+      }
+    } catch (error) {
+      console.error("Auto cleanup failed:", error);
+    }
+  }
 }
 
 export async function logHistory({
@@ -177,60 +308,93 @@ export async function logHistory({
   });
 }
 
-// =================================
-// Wrapper pentru adăugare carte
-// =================================
-export async function addBook(book, user) {
-  // adaugă cartea în Firestore
-  await addBookToFirestore(book);
+// ==========================================
+// 9. WRAPPER FUNCTIONS WITH HISTORY LOGGING
+// ==========================================
 
-  // loghează acțiunea în istoric
+// Wrapper pentru adăugare carte cu istoric
+export async function addBook(book, user) {
+  await addBookToFirestore(book);
+  await addAuthorToFirestore(book.author);
   await logHistory({
     action: "Added Book",
     book: book.title,
-    user: user.displayName, // doar numele
-    quantity: 1,
-    notes: "", // gol
+    user: user.displayName || user.email || "Unknown User",
+    quantity: book.stock || 1,
+    notes: `ISBN: ${book.isbn}`,
   });
 }
 
-async function editBook(bookId, updatedData, user) {
+// Wrapper pentru editare carte cu istoric
+export async function editBook(bookId, updatedData, user, originalBook) {
   await updateBookInFirestore(bookId, updatedData);
+  
+  if (updatedData.author) {
+    await addAuthorToFirestore(updatedData.author);
+  }
+  
+  const changes = [];
+  
+  if (originalBook.title !== updatedData.title) {
+    changes.push(`Title: "${originalBook.title}" → "${updatedData.title}"`);
+  }
+  
+  if (originalBook.author !== updatedData.author) {
+    changes.push(`Author: "${originalBook.author}" → "${updatedData.author}"`);
+  }
+  
+  if (originalBook.stock !== updatedData.stock) {
+    changes.push(`Stock: ${originalBook.stock} → ${updatedData.stock}`);
+  }
+  
+  if (originalBook.price !== updatedData.price) {
+    changes.push(`Price: ${originalBook.price}€ → ${updatedData.price}€`);
+  }
+  
+  if (originalBook.isbn !== updatedData.isbn) {
+    changes.push(`ISBN: "${originalBook.isbn}" → "${updatedData.isbn}"`);
+  }
+  
+  const changesText = changes.length > 0 ? changes.join(", ") : "No changes detected";
+  
   await logHistory({
     action: "Edited Book",
-    book: updatedData.title || "Unknown",
-    user: user.displayName, // doar numele
-    notes: "", // gol
+    book: originalBook.title,
+    user: user.displayName || user.email || "Unknown User",
+    quantity: null,
+    notes: changesText,
   });
 }
 
-async function deleteBook(bookId, bookTitle, user) {
-  await deleteDoc(doc(db, "books", bookId));
+// Wrapper pentru ștergere carte cu istoric
+export async function deleteBook(bookId, bookTitle, user) {
+  await deleteBookFromFirestore(bookId);
+  
   await logHistory({
     action: "Deleted Book",
     book: bookTitle,
-    user: user.displayName, // doar numele
-    notes: "", // gol
+    user: user.displayName || user.email || "Unknown User",
+    quantity: null,
+    notes: "",
   });
 }
 
-async function sellBook(bookId, bookTitle, quantitySold, user, notes = "") {
-  // 1. Actualizează stocul
+// Wrapper pentru vânzare carte cu istoric
+export async function sellBook(bookId, bookTitle, quantitySold, user, notes = "") {
   const bookRef = doc(db, "books", bookId);
   const bookSnap = await getDoc(bookRef);
   if (bookSnap.exists()) {
-    const currentQty = bookSnap.data().quantity || 0;
+    const currentQty = bookSnap.data().stock || 0;
     await updateBookInFirestore(bookId, {
-      quantity: currentQty - quantitySold,
+      stock: currentQty - quantitySold,
     });
   }
 
-  // 2. Adaugă în istoric
   await logHistory({
     action: "Sold Book",
     book: bookTitle,
-    user: user.displayName, // doar numele
+    user: user.displayName || user.email || "Unknown User",
     quantity: quantitySold,
-    notes, // notița introdusă de user
+    notes: notes,
   });
 }
