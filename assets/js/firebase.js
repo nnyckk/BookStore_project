@@ -150,7 +150,7 @@ export function onAuthChange(callback) {
 }
 
 // ==========================================
-// 8. Firestore helper functions (History) - OPTIMIZAT
+// 8. Firestore helper functions (History) - OPTIMIZED
 // ==========================================
 export async function addHistoryEntry(entry) {
   await addDoc(collection(db, "history"), {
@@ -159,13 +159,13 @@ export async function addHistoryEntry(entry) {
   });
 }
 
-// NOUA FUNCȚIE - Încarcă istoric cu paginare (lazy loading)
+// NEW FUNCTION - Load history with pagination (lazy loading)
 export async function loadHistoryPage(pageSize = 20, lastDoc = null) {
   const historyCol = collection(db, "history");
   
   let q;
   if (lastDoc) {
-    // Pentru paginile următoare
+    // For subsequent pages
     q = query(
       historyCol,
       orderBy("timestamp", "desc"),
@@ -173,7 +173,7 @@ export async function loadHistoryPage(pageSize = 20, lastDoc = null) {
       limit(pageSize)
     );
   } else {
-    // Pentru prima pagină
+    // For first page
     q = query(
       historyCol,
       orderBy("timestamp", "desc"),
@@ -185,7 +185,7 @@ export async function loadHistoryPage(pageSize = 20, lastDoc = null) {
   const history = snapshot.docs.map((docSnap) => ({
     id: docSnap.id,
     ...docSnap.data(),
-    _doc: docSnap, // Păstrăm referința pentru paginare
+    _doc: docSnap, // Keep reference for pagination
   }));
 
   return {
@@ -195,7 +195,7 @@ export async function loadHistoryPage(pageSize = 20, lastDoc = null) {
   };
 }
 
-// FUNCȚIE PENTRU REAL-TIME UPDATES DOAR PENTRU PRIMA PAGINĂ
+// FUNCTION FOR REAL-TIME UPDATES ONLY FOR FIRST PAGE
 export function onHistoryChangeFirstPage(callback, pageSize = 20) {
   const historyCol = collection(db, "history");
   const q = query(historyCol, orderBy("timestamp", "desc"), limit(pageSize));
@@ -214,19 +214,19 @@ export function onHistoryChangeFirstPage(callback, pageSize = 20) {
   });
 }
 
-// FUNCȚIE PENTRU CLEANUP - Șterge datele mai vechi de 3 luni
+// CLEANUP FUNCTION - Delete data older than 5 months
 export async function cleanupOldHistory() {
   console.log("Starting history cleanup...");
   
-  const threeMonthsAgo = new Date();
-  threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
-  const threeMonthsAgoTimestamp = Timestamp.fromDate(threeMonthsAgo);
+  const fiveMonthsAgo = new Date();
+  fiveMonthsAgo.setMonth(fiveMonthsAgo.getMonth() - 5);
+  const fiveMonthsAgoTimestamp = Timestamp.fromDate(fiveMonthsAgo);
   
   const historyCol = collection(db, "history");
   const oldEntriesQuery = query(
     historyCol,
-    where("timestamp", "<=", threeMonthsAgoTimestamp),
-    limit(500) // Șterge în batches pentru a evita timeout-urile
+    where("timestamp", "<=", fiveMonthsAgoTimestamp),
+    limit(500) // Delete in batches to avoid timeouts
   );
   
   try {
@@ -237,7 +237,7 @@ export async function cleanupOldHistory() {
       return { deleted: 0, error: null };
     }
     
-    // Folosește batch write pentru eficiență
+    // Use batch write for efficiency
     const batch = writeBatch(db);
     snapshot.docs.forEach((doc) => {
       batch.delete(doc.ref);
@@ -248,10 +248,10 @@ export async function cleanupOldHistory() {
     const deletedCount = snapshot.docs.length;
     console.log(`Deleted ${deletedCount} old history entries.`);
     
-    // Dacă am șters exact 500 (batch size), poate mai sunt altele
+    // If we deleted exactly 500 (batch size), there might be more
     if (deletedCount === 500) {
       console.log("More entries might exist, running cleanup again...");
-      // Rulează din nou recursiv
+      // Run recursively
       const nextResult = await cleanupOldHistory();
       return { 
         deleted: deletedCount + nextResult.deleted, 
@@ -267,14 +267,14 @@ export async function cleanupOldHistory() {
   }
 }
 
-// FUNCȚIE PENTRU CLEANUP AUTOMAT - Rulează la pornirea aplicației
+// AUTO CLEANUP FUNCTION - Runs at app startup
 export async function initAutoCleanup() {
   const lastCleanupKey = "lastHistoryCleanup";
   const lastCleanup = localStorage.getItem(lastCleanupKey);
   const now = Date.now();
-  const oneWeek = 7 * 24 * 60 * 60 * 1000; // 7 zile în millisecunde
+  const oneWeek = 7 * 24 * 60 * 60 * 1000; // 7 days in milliseconds
   
-  // Rulează cleanup-ul o dată pe săptămână
+  // Run cleanup once per week
   if (!lastCleanup || (now - parseInt(lastCleanup)) > oneWeek) {
     console.log("Running scheduled history cleanup...");
     
@@ -312,7 +312,7 @@ export async function logHistory({
 // 9. WRAPPER FUNCTIONS WITH HISTORY LOGGING
 // ==========================================
 
-// Wrapper pentru adăugare carte cu istoric
+// Wrapper for adding book with history
 export async function addBook(book, user) {
   await addBookToFirestore(book);
   await addAuthorToFirestore(book.author);
@@ -325,7 +325,7 @@ export async function addBook(book, user) {
   });
 }
 
-// Wrapper pentru editare carte cu istoric
+// Wrapper for editing book with history
 export async function editBook(bookId, updatedData, user, originalBook) {
   await updateBookInFirestore(bookId, updatedData);
   
@@ -366,7 +366,7 @@ export async function editBook(bookId, updatedData, user, originalBook) {
   });
 }
 
-// Wrapper pentru ștergere carte cu istoric
+// Wrapper for deleting book with history
 export async function deleteBook(bookId, bookTitle, user) {
   await deleteBookFromFirestore(bookId);
   
@@ -379,7 +379,7 @@ export async function deleteBook(bookId, bookTitle, user) {
   });
 }
 
-// Wrapper pentru vânzare carte cu istoric
+// Wrapper for selling book with history
 export async function sellBook(bookId, bookTitle, quantitySold, user, notes = "") {
   const bookRef = doc(db, "books", bookId);
   const bookSnap = await getDoc(bookRef);

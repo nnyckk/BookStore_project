@@ -8,6 +8,7 @@ import {
   addBook,
   editBook,
   sellBook,
+  logoutUser,
 } from "./firebase.js";
 
 import { setupHistory, loadHistory } from "./history-manager.js";
@@ -17,8 +18,8 @@ import { setupAutocomplete } from "./autocomplete.js";
 // GLOBAL STATE
 // =========================
 export let books = [];
-export let editIndex = null;
-export let sellIndex = null;
+let editIndex = null;
+let sellIndex = null;
 export let sortState = { title: "asc", author: "asc" };
 export let priceFilterState = { min: null, max: null };
 export let currentUser = null;
@@ -27,24 +28,43 @@ export let currentUser = null;
 export let elements = {};
 
 // =========================
+// STATE MANAGEMENT FUNCTIONS
+// =========================
+export function setEditIndex(value) {
+  editIndex = value;
+}
+
+export function setSellIndex(value) {
+  sellIndex = value;
+}
+
+export function getEditIndex() {
+  return editIndex;
+}
+
+export function getSellIndex() {
+  return sellIndex;
+}
+
+// =========================
 // INITIALIZATION
 // =========================
 document.addEventListener("DOMContentLoaded", async () => {
   // Initialize DOM elements
   initializeDOMElements();
-  
+
   // Initialize auto cleanup and load books
   await initAutoCleanup();
-  
+
   // Set up user data
   setupUserData();
-  
+
   // Set up components
   setupHistory();
   setupAutocomplete();
   setupTabNavigation();
   setupEventListeners();
-  
+
   // Load initial data
   await loadBooks();
 });
@@ -58,33 +78,39 @@ function initializeDOMElements() {
     tableBody: document.querySelector("#bookTable tbody"),
     searchInput: document.getElementById("searchInput"),
     bookCountEl: document.getElementById("bookCount"),
-    
+
     // Modal elements
     addBookModal: document.getElementById("addBookModal"),
     openAddBookBtn: document.getElementById("addBook"),
-    closeAddBookBtn: document.getElementById("addBookModal").querySelector(".close"),
+    closeAddBookBtn: document
+      .getElementById("addBookModal")
+      .querySelector(".close"),
     addBookForm: document.getElementById("addBookForm"),
     addError: document.getElementById("addError"),
     authorInput: document.getElementById("bookAuthor"),
-    
+
     // Sell modal elements
     sellBookModal: document.getElementById("sellBookModal"),
-    closeSellBookBtn: document.getElementById("sellBookModal").querySelector(".sell-close"),
+    closeSellBookBtn: document
+      .getElementById("sellBookModal")
+      .querySelector(".sell-close"),
     sellBookForm: document.getElementById("sellBookForm"),
     sellQuantityInput: document.getElementById("sellQuantity"),
     sellNotesInput: document.getElementById("sellNotes"),
-    sellConfirmBtn: document.getElementById("sellBookForm").querySelector(".save-btn"),
+    sellConfirmBtn: document
+      .getElementById("sellBookForm")
+      .querySelector(".save-btn"),
     sellBookTitle: document.getElementById("sellBookTitle"),
     sellBookAuthor: document.getElementById("sellBookAuthor"),
     sellBookStock: document.getElementById("sellBookStock"),
     sellError: document.getElementById("sellError"),
-    
+
     // Sorting elements
     titleHeader: document.getElementById("titleHeader"),
     authorHeader: document.getElementById("authorHeader"),
     titleArrow: document.getElementById("titleArrow"),
     authorArrow: document.getElementById("authorArrow"),
-    
+
     // Filter elements
     priceArrow: document.getElementById("priceArrow"),
     priceFilter: document.getElementById("priceFilter"),
@@ -92,7 +118,7 @@ function initializeDOMElements() {
     maxPriceInput: document.getElementById("maxPrice"),
     applyPriceFilterBtn: document.getElementById("applyPriceFilter"),
     resetPriceFilter: document.getElementById("resetPriceFilter"),
-    
+
     // Tab navigation elements
     libraryBtn: document.getElementById("showLibraryTable"),
     historyBtn: document.getElementById("showHistoryTable"),
@@ -153,6 +179,15 @@ export function renderTable(filteredBooks = null) {
         <span class="sell-icon" data-id="${book.id}" title="Sell">
           <svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 -960 960 960" width="30px" fill="#3888bc"><path d="M280-80q-33 0-56.5-23.5T200-160q0-33 23.5-56.5T280-240q33 0 56.5 23.5T360-160q0 33-23.5 56.5T280-80Zm400 0q-33 0-56.5-23.5T600-160q0-33 23.5-56.5T680-240q33 0 56.5 23.5T760-160q0 33-23.5 56.5T680-80ZM246-720l96 200h280l110-200H246Zm-38-80h590q23 0 35 20.5t1 41.5L692-482q-11 20-29.5 31T622-440H324l-44 80h480v80H280q-45 0-68-39.5t-2-78.5l54-98-144-304H40v-80h130l38 80Zm134 280h280-280Z"/></svg>
         </span>
+        ${
+          currentUser?.role === "admin"
+            ? `
+          <span class="delete-icon" data-id="${book.id}" title="Delete">
+            <svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 -960 960 960" width="30px" fill="#3888bc"><path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/></svg>
+          </span>
+        `
+            : ""
+        }
       </td>
     `;
 
@@ -163,6 +198,9 @@ export function renderTable(filteredBooks = null) {
     else stockCell.classList.remove("stock-zero", "stock-low");
 
     fragment.appendChild(row);
+    if (currentUser?.role !== 'admin') {
+      row.querySelector('.has-icon').classList.add('volunteer-icons');
+    }
   });
 
   elements.tableBody.appendChild(fragment);
@@ -262,8 +300,14 @@ function sortBooks(by, restore = false) {
     const valA = typeof a[by] === "string" ? a[by].toLowerCase() : a[by];
     const valB = typeof b[by] === "string" ? b[by].toLowerCase() : b[by];
     return valA < valB
-      ? order === "asc" ? -1 : 1
-      : valA > valB ? order === "asc" ? 1 : -1 : 0;
+      ? order === "asc"
+        ? -1
+        : 1
+      : valA > valB
+      ? order === "asc"
+        ? 1
+        : -1
+      : 0;
   });
 
   localStorage.setItem("sortState", JSON.stringify({ by, order }));
@@ -272,7 +316,8 @@ function sortBooks(by, restore = false) {
   const descSVG = `<svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 -960 960 960" width="30px" fill="#3888bc"><path d="M480-360 280-560h400L480-360Z"/></svg>`;
 
   elements.titleArrow.innerHTML = sortState.title === "asc" ? ascSVG : descSVG;
-  elements.authorArrow.innerHTML = sortState.author === "asc" ? ascSVG : descSVG;
+  elements.authorArrow.innerHTML =
+    sortState.author === "asc" ? ascSVG : descSVG;
 
   applyFilters();
 }
@@ -297,9 +342,9 @@ function setupUserData() {
     currentUser = {
       displayName: userName,
       email: userEmail,
-      role: userRole
+      role: userRole,
     };
-    
+
     userGreeting.innerHTML = `Hello, ${userName}`;
     userEmailEl.innerHTML = `<strong>Email:</strong> ${userEmail}`;
     userRoleDisplay.innerHTML = userRole
@@ -412,11 +457,11 @@ function setupTabNavigation() {
 function setupEventListeners() {
   // Search
   elements.searchInput.addEventListener("input", applyFilters);
-  
+
   // Sorting
   elements.titleHeader.addEventListener("click", () => sortBooks("title"));
   elements.authorHeader.addEventListener("click", () => sortBooks("author"));
-  
+
   // Price filter
   elements.priceArrow.addEventListener("click", () => {
     elements.priceFilter.style.display =
@@ -424,8 +469,12 @@ function setupEventListeners() {
   });
 
   elements.applyPriceFilterBtn.addEventListener("click", () => {
-    priceFilterState.min = elements.minPriceInput.value ? +elements.minPriceInput.value : null;
-    priceFilterState.max = elements.maxPriceInput.value ? +elements.maxPriceInput.value : null;
+    priceFilterState.min = elements.minPriceInput.value
+      ? +elements.minPriceInput.value
+      : null;
+    priceFilterState.max = elements.maxPriceInput.value
+      ? +elements.maxPriceInput.value
+      : null;
     applyFilters();
     elements.priceFilter.style.display = "none";
     elements.priceArrow.classList.toggle(

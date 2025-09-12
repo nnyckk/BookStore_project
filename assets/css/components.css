@@ -6,408 +6,467 @@
    Base Button Styles
 --------------------------------------------- */
 .btn {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: transparent;
-    border: none;
-    border-radius: var(--border-default);
-    cursor: pointer;
-    font-size: var(--fs-body);
-    transition: all 0.2s ease;
-  }
-  
-  /* ---------------------------------------------
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: transparent;
+  border: none;
+  border-radius: var(--border-default);
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.85rem;
+  transition: 0.2s ease-in-out;
+}
+/* ---------------------------------------------
      Menu & User Buttons
   --------------------------------------------- */
-  .menu-btn,
-  .user-btn {
-    padding: 0.5rem;
-  }
-  
-  .menu-btn svg,
-  .user-btn svg {
-    fill: var(--neutral-50);
-    transition: 0.3s, width 0.3s;
-  }
-  
-  .menu-btn:hover,
-  .user-btn:hover {
-    background-color: var(--neutral-50);
-  }
-  
-  .menu-btn:hover svg,
-  .user-btn:hover svg {
-    fill: var(--neutral-900);
-  }
-  
-  /* Active States */
-  #addBook.active,
-  .user-btn.active {
-    background-color: var(--neutral-50);
-  }
-  
-  #addBook.active svg,
-  .user-btn.active svg {
-    fill: var(--warning);
-  }
-  
-  #showLibraryTable.active,
-  #showHistoryTable.active {
-    background-color: var(--neutral-50);
-  }
-  
-  #showLibraryTable.active svg,
-  #showHistoryTable.active svg {
-    fill: var(--warning);
-  }
-  
-  #showLibraryTable.active:hover,
-  #showHistoryTable.active:hover {
-    background-color: var(--neutral-50);
-  }
-  
-  /* Special Button Effects */
-  #addBook:hover svg {
-    transform: rotate(.25turn) scale(1.2);
-  }
-  
-  /* ---------------------------------------------
+.menu-btn,
+.user-btn {
+  padding: 0.5rem;
+}
+
+.menu-btn svg,
+.user-btn svg {
+  fill: var(--neutral-50);
+  transition: 0.3s, width 0.3s;
+}
+
+.menu-btn:hover,
+.user-btn:hover {
+  background-color: var(--neutral-50);
+}
+
+.menu-btn:hover svg,
+.user-btn:hover svg {
+  fill: var(--neutral-900);
+}
+
+/* Active States */
+#addBook.active,
+.user-btn.active {
+  background-color: var(--neutral-50);
+}
+
+#addBook.active svg,
+.user-btn.active svg {
+  fill: var(--warning);
+}
+
+#showLibraryTable.active,
+#showHistoryTable.active {
+  background-color: var(--neutral-50);
+}
+
+#showLibraryTable.active svg,
+#showHistoryTable.active svg {
+  fill: var(--warning);
+}
+
+#showLibraryTable.active:hover,
+#showHistoryTable.active:hover {
+  background-color: var(--neutral-50);
+}
+
+/* Special Button Effects */
+#addBook:hover svg {
+  transform: rotate(0.25turn) scale(1.2);
+}
+
+/* ---------------------------------------------
      Action Buttons (Save, Apply, etc.)
   --------------------------------------------- */
-  .save-btn {
-    width: 100%;
-    padding: 1rem 0.5rem;
-    background-color: var(--primary-500);
-    color: var(--text-dark);
-    border: none;
-    border-radius: var(--border-default);
-    cursor: pointer;
-  }
-  
-  .save-btn:hover {
-    background-color: var(--primary-600);
-  }
-  
-  .logout-btn {
-    width: 50%;
-    padding: 0.8rem 0.5rem;
-    margin: 3rem auto 0 auto;
-    background-color: var(--error);
-    color: var(--text-dark);
-    border: none;
-    border-radius: var(--border-default);
-    cursor: pointer;
-    display: block;
-  }
-  
-  .logout-btn:hover {
-    background-color: var(--error-hover);
-  }
-  
-  /* Load More Button */
-  .load-more-btn {
-    width: 10%;
-    margin: 1rem auto 0 auto; 
-    padding: .5rem 1rem;
-    background-color: var(--primary-500);
-    color: var(--text-dark);
-    border: none;
-    border-radius: var(--border-default);
-    cursor: pointer;
-    font-weight: 500;
-    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1);
-    display: block;
-  }
-  
-  .load-more-btn:hover {
-    background-color: var(--primary-600);
-    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.15);
-  }
-  
-  .load-more-btn:active {
-    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1);
-  }
-  
-  .load-more-btn:disabled {
-    background-color: var(--neutral-100);
-    color: var(--neutral-600);
-    cursor: not-allowed;
-    transform: none;
-    box-shadow: none;
-  }
-  
-  .load-more-btn:disabled:hover {
-    background-color: var(--neutral-100);
-    transform: none;
-    box-shadow: none;
-  }
-  
-  /* Price Filter Buttons */
-  #applyPriceFilter {
-    flex: 7;
-    padding: 0.5rem;
-    font-size: var(--fs-small);
-    text-transform: uppercase;
-    border-radius: var(--border-default);
-    border: none;
-    cursor: pointer;
-    background-color: var(--primary-500);
-    color: var(--text-dark);
-  }
-  
-  #applyPriceFilter:hover {
-    background-color: var(--primary-600);
-  }
-  
-  #resetPriceFilter {
-    flex: 3;
-    padding: 0.5rem;
-    font-size: var(--fs-small);
-    text-transform: uppercase;
-    border-radius: var(--border-default);
-    border: none;
-    cursor: pointer;
-    background-color: var(--warning);
-    color: var(--text-dark);
-  }
-  
-  #resetPriceFilter:hover {
-    background-color: var(--warning-hover);
-  }
-  
-  .price-filter-buttons {
-    display: flex;
-    gap: 0.3rem;
-    justify-content: center;
-    align-items: center;
-    margin-top: 0.5em;
-  }
-  
-  /* ---------------------------------------------
+
+/* Common button properties */
+.save-btn,
+.cancel-btn,
+.delete-btn,
+.logout-btn {
+  padding: 0.8rem 0.5rem;
+  border-radius: var(--border-default);
+  cursor: pointer;
+  font-size: var(--fs-body);
+  transition: all 0.2s ease;
+  border: none;
+}
+
+/* Save button specific */
+.save-btn {
+  width: 100%;
+  padding: 1rem 0.5rem;
+  background-color: var(--primary-500);
+  color: var(--text-dark);
+}
+
+.save-btn:hover {
+  background-color: var(--primary-600);
+}
+
+/* Delete modal container */
+.delete-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+/* Cancel and Delete buttons - common width */
+.cancel-btn,
+.delete-btn {
+  flex: 1;
+  padding: 1rem 0.5rem;
+}
+
+/* Cancel button specific */
+.cancel-btn {
+  background-color: transparent;
+  color: var(--neutral-400);
+  border: 2px solid var(--neutral-400);
+}
+
+.cancel-btn:hover {
+  background-color: var(--neutral-100);
+  color: var(--neutral-500);
+  border-color: var(--neutral-400);
+}
+
+/* Delete button specific */
+.delete-btn {
+  background-color: var(--error);
+  color: var(--text-dark);
+}
+
+.delete-btn:hover {
+  background-color: var(--error-hover);
+}
+
+/* Logout button specific */
+.logout-btn {
+  width: 50%;
+  margin: 3rem auto 0 auto;
+  background-color: var(--error);
+  color: var(--text-dark);
+  display: block;
+}
+
+.logout-btn:hover {
+  background-color: var(--error-hover);
+}
+
+/* Load More Button */
+.load-more-btn {
+  width: 10%;
+  margin: 1rem auto 0 auto;
+  padding: 0.5rem 1rem;
+  background-color: var(--primary-500);
+  color: var(--text-dark);
+  border: none;
+  border-radius: var(--border-default);
+  cursor: pointer;
+  font-weight: 500;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1);
+  display: block;
+}
+
+.load-more-btn:hover {
+  background-color: var(--primary-600);
+  box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.15);
+}
+
+.load-more-btn:active {
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1);
+}
+
+.load-more-btn:disabled {
+  background-color: var(--neutral-100);
+  color: var(--neutral-600);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.load-more-btn:disabled:hover {
+  background-color: var(--neutral-100);
+  transform: none;
+  box-shadow: none;
+}
+
+/* Price Filter Buttons */
+#applyPriceFilter {
+  flex: 7;
+  padding: 0.5rem;
+  font-size: var(--fs-small);
+  text-transform: uppercase;
+  border-radius: var(--border-default);
+  border: none;
+  cursor: pointer;
+  background-color: var(--primary-500);
+  color: var(--text-dark);
+}
+
+#applyPriceFilter:hover {
+  background-color: var(--primary-600);
+}
+
+#resetPriceFilter {
+  flex: 3;
+  padding: 0.5rem;
+  font-size: var(--fs-small);
+  text-transform: uppercase;
+  border-radius: var(--border-default);
+  border: none;
+  cursor: pointer;
+  background-color: var(--warning);
+  color: var(--text-dark);
+}
+
+#resetPriceFilter:hover {
+  background-color: var(--warning-hover);
+}
+
+.price-filter-buttons {
+  display: flex;
+  gap: 0.3rem;
+  justify-content: center;
+  align-items: center;
+  margin-top: 0.5em;
+}
+
+/* ---------------------------------------------
      Modals
   --------------------------------------------- */
-  .modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 1000;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .modal-content {
-    position: relative;
-    background-color: var(--neutral-50);
-    padding: 1.25rem;
-    border-radius: var(--border-default);
-    width: 30rem;
-    max-width: 90%;
-    box-shadow: 0 0.375rem 1.25rem rgba(0, 0, 0, 0.2);
-    animation: fadeIn 0.3s ease;
-  }
-  
-  .modal-content h2 {
-    margin-top: 0;
-    font-size: var(--fs-h4);
-    text-align: center;
-    color: var(--primary-900);
-  }
-  
-  .modal-content p {
-    margin: 0.5rem 0;
-    font-size: var(--fs-body);
-    color: var(--text-light);
-  }
-  
-  .modal-content label {
-    display: block;
-    margin: 0.625rem 0 0.3125rem;
-    font-size: var(--fs-h6);
-    font-weight: 500;
-  }
-  
-  /* Close button inside modals */
-  .close {
-    display: flex;
-    position: absolute;
-    top: 1.15rem;
-    right: 1.25rem;
-    cursor: pointer;
-    border-radius: var(--border-circle);
-    padding: 0.3rem;
-    transition: 0.2s ease;
-  }
-  
-  .close:hover {
-    background-color: var(--neutral-100);
-  }
-  
-  .close svg {
-    fill: var(--neutral-900);
-  }
-  
-  /* ---------------------------------------------
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  position: relative;
+  background-color: var(--neutral-50);
+  padding: 1.25rem;
+  border-radius: var(--border-default);
+  width: 30rem;
+  max-width: 90%;
+  box-shadow: 0 0.375rem 1.25rem rgba(0, 0, 0, 0.2);
+  animation: fadeIn 0.3s ease;
+}
+
+.modal-content h2 {
+  margin-top: 0;
+  font-size: var(--fs-h4);
+  text-align: center;
+  color: var(--primary-900);
+}
+
+.modal-content p {
+  margin: 0.5rem 0;
+  font-size: var(--fs-body);
+  color: var(--text-light);
+}
+
+.modal-content label {
+  display: block;
+  margin: 0.625rem 0 0.3125rem;
+  font-size: var(--fs-h6);
+  font-weight: 500;
+}
+.delete-modal p {
+  font-size: var(--fs-body);
+  text-align: center;
+}
+.delete-modal .delete-book-name {
+  font-size: var(--fs-body);
+  font-weight: 700;
+}
+.delete-modal .delete-warning {
+  background-color: var(--warning);
+  padding: 0.5rem;
+  border-radius: var(--border-default);
+}
+/* Close button inside modals */
+.close {
+  display: flex;
+  position: absolute;
+  top: 1.15rem;
+  right: 1.25rem;
+  cursor: pointer;
+  border-radius: var(--border-circle);
+  padding: 0.3rem;
+  transition: 0.2s ease;
+}
+
+.close:hover {
+  background-color: var(--neutral-100);
+}
+
+.close svg {
+  fill: var(--neutral-900);
+}
+
+/* ---------------------------------------------
      Forms & Inputs
   --------------------------------------------- */
-  #sellBookForm input,
-  #sellBookForm textarea,
-  #addBookForm input {
-    width: 100%;
-    padding: 0.5rem;
-    margin-bottom: 0.7rem;
-    border: 1px solid var(--neutral-300);
-    border-radius: var(--border-default);
-    font-size: var(--fs-body);
-    color: var(--text-light);
-  }
-  
-  /* Price Filter Container */
-  #priceFilter {
-    display: none;
-    position: absolute;
-    top: 2.4rem;
-    width: 12rem;
-    padding: 0.5rem;
-    gap: 0.3rem;
-    flex-direction: column;
-    background-color: var(--neutral-50);
-    border: 0.0625rem solid var(--neutral-100);
-    border-radius: var(--border-default);
-    z-index: 9999;
-    box-shadow: rgba(0, 0, 0, 0.15) 0 0.3rem 0.6rem;
-    animation: fadeIn 0.2s ease;
-  }
-  
-  #priceFilter input {
-    width: 100%;
-    padding: 0.5rem;
-    font-size: var(--fs-small);
-    border: 1px solid var(--neutral-300);
-    border-radius: var(--border-default);
-  }
-  
-  /* Input States */
-  input.invalid,
-  textarea.invalid {
-    outline: 2px solid var(--error);
-    outline-offset: 2px;
-  }
-  
-  /* Error Messages */
-  #addError,
-  #sellError {
-    display: none;
-    justify-content: center;
-    margin: 0.5em 0;
-    padding: 0.2em;
-    border-radius: var(--border-default);
-    color: var(--text-dark);
-    background-color: var(--error);
-    font-size: var(--fs-small);
-    font-weight: 500;
-  }
-  
-  /* ---------------------------------------------
+#sellBookForm input,
+#sellBookForm textarea,
+#addBookForm input {
+  width: 100%;
+  padding: 0.5rem;
+  margin-bottom: 0.7rem;
+  border: 1px solid var(--neutral-300);
+  border-radius: var(--border-default);
+  font-size: var(--fs-body);
+  color: var(--text-light);
+}
+
+/* Price Filter Container */
+#priceFilter {
+  display: none;
+  position: absolute;
+  top: 2.4rem;
+  width: 12rem;
+  padding: 0.5rem;
+  gap: 0.3rem;
+  flex-direction: column;
+  background-color: var(--neutral-50);
+  border: 0.0625rem solid var(--neutral-100);
+  border-radius: var(--border-default);
+  z-index: 9999;
+  box-shadow: rgba(0, 0, 0, 0.15) 0 0.3rem 0.6rem;
+  animation: fadeIn 0.2s ease;
+}
+
+#priceFilter input {
+  width: 100%;
+  padding: 0.5rem;
+  font-size: var(--fs-small);
+  border: 1px solid var(--neutral-300);
+  border-radius: var(--border-default);
+}
+
+/* Input States */
+input.invalid,
+textarea.invalid {
+  outline: 2px solid var(--error);
+  outline-offset: 2px;
+}
+
+/* Error Messages */
+#addError,
+#sellError {
+  display: none;
+  justify-content: center;
+  margin: 0.5em 0;
+  padding: 0.2em;
+  border-radius: var(--border-default);
+  color: var(--text-dark);
+  background-color: var(--error);
+  font-size: var(--fs-small);
+  font-weight: 500;
+}
+
+/* ---------------------------------------------
      Autocomplete Suggestions
   --------------------------------------------- */
-  #authorSuggestions {
-    position: absolute;
-    background: var(--neutral-50);
-    border: 0.0625rem solid var(--neutral-300);
-    border-radius: var(--border-default);
-    max-height: 150px;
-    overflow-y: auto;
-    width: 100%;
-    box-shadow: 0 0.375rem 1.25rem rgba(0, 0, 0, 0.2);
-    z-index: 1000;
-    display: none;
-  }
-  
-  #authorSuggestions::-webkit-scrollbar-thumb {
-    background: var(--neutral-300);
-    border-radius: 0.2rem;
-  }
-  
-  .suggestion-item {
-    padding: 0.5em 0.7em;
-    cursor: pointer;
-  }
-  
-  .suggestion-item:hover,
-  .suggestion-item.highlight {
-    background-color: var(--primary-100);
-  }
-  
-  /* ---------------------------------------------
+#authorSuggestions {
+  position: absolute;
+  background: var(--neutral-50);
+  border: 0.0625rem solid var(--neutral-300);
+  border-radius: var(--border-default);
+  max-height: 150px;
+  overflow-y: auto;
+  width: 100%;
+  box-shadow: 0 0.375rem 1.25rem rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  display: none;
+}
+
+#authorSuggestions::-webkit-scrollbar-thumb {
+  background: var(--neutral-300);
+  border-radius: 0.2rem;
+}
+
+.suggestion-item {
+  padding: 0.5em 0.7em;
+  cursor: pointer;
+}
+
+.suggestion-item:hover,
+.suggestion-item.highlight {
+  background-color: var(--primary-100);
+}
+
+/* ---------------------------------------------
      Book Info Display (in Sell Modal)
   --------------------------------------------- */
-  .book-info {
-    display: flex;
-    flex-direction: column;
-    margin: 1rem 0;
-  }
-  
-  .info-row {
-    display: flex;
-    gap: 0.35rem;
-    margin: 0.2rem 0;
-  }
-  
-  .info-label {
-    font-weight: 700;
-    font-size: var(--fs-h6);
-    color: var(--text-light);
-  }
-  
-  .info-value {
-    font-weight: 400;
-    font-size: var(--fs-h6);
-    color: var(--text-light);
-  }
-  
-  .separator {
-    height: 0.1rem;
-    border: none;
-    border-radius: var(--border-default);
-    background-color: var(--neutral-200);
-    margin: 1rem 0;
-  }
-  
-  /* ---------------------------------------------
+.book-info {
+  display: flex;
+  flex-direction: column;
+  margin: 1rem 0;
+}
+
+.info-row {
+  display: flex;
+  gap: 0.35rem;
+  margin: 0.2rem 0;
+}
+
+.info-label {
+  font-weight: 700;
+  font-size: var(--fs-h6);
+  color: var(--text-light);
+}
+
+.info-value {
+  font-weight: 400;
+  font-size: var(--fs-h6);
+  color: var(--text-light);
+}
+
+.separator {
+  height: 0.1rem;
+  border: none;
+  border-radius: var(--border-default);
+  background-color: var(--neutral-200);
+  margin: 1rem 0;
+}
+
+/* ---------------------------------------------
      User Greeting
   --------------------------------------------- */
-  #userGreeting {
-    margin-bottom: 1.5rem;
-  }
-  
-  /* ---------------------------------------------
+#userGreeting {
+  margin-bottom: 1.5rem;
+}
+
+/* ---------------------------------------------
      Success Popup
   --------------------------------------------- */
-  .popup {
-    display: block;
-    position: fixed;
-    bottom: 1rem;
-    right: 1rem;
-    z-index: 9999;
-    background-color: var(--success);
-    color: var(--text-dark);
-    font-size: var(--fs-body);
-    padding: 1em;
-    border-radius: var(--border-default);
-    box-shadow: 0 0.13rem 0.38rem rgba(0, 0, 0, 0.3);
-    opacity: 0;
-    transform: translateY(1.3rem);
-    transition: 0.3s ease-in-out;
-    pointer-events: none;
-  }
-  
-  .popup.show {
-    opacity: 1;
-    transform: translateY(0);
-    pointer-events: auto;
-  }
+.popup {
+  display: block;
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  z-index: 9999;
+  background-color: var(--success);
+  color: var(--text-dark);
+  font-size: var(--fs-body);
+  padding: 1em;
+  border-radius: var(--border-default);
+  box-shadow: 0 0.13rem 0.38rem rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  transform: translateY(1.3rem);
+  transition: 0.3s ease-in-out;
+  pointer-events: none;
+}
+
+.popup.show {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}

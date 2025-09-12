@@ -6,220 +6,245 @@
    Base Table Styling
 --------------------------------------------- */
 table {
-    width: 100%;
-    border-collapse: collapse;
-    background-color: var(--neutral-50);
-    text-align: left;
-  }
-  
-  thead {
-    position: sticky;
-    top: 0;
-    background-color: var(--neutral-900);
-    color: var(--text-dark);
-    z-index: 1;
-  }
-  
-  th {
-    padding: 0.75rem 2rem;
-    font-size: 0.9rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-  }
-  
-  td {
-    padding: 1rem 2rem;
-    font-size: var(--fs-body);
-    font-weight: 500;
-    border-bottom: 0.0625rem solid var(--neutral-100);
-  }
-  
-  tbody tr {
-    position: relative;
-  }
-  
-  /* Row Hover Effects */
-  #bookTable tbody tr:hover,
-  #historyTable tbody tr:hover {
-    background-color: var(--primary-100) !important;
-    transition: 0.15s;
-  }
-  
-  /* Stock Status Coloring */
-  .stock-low {
-    color: var(--warning);
-  }
-  
-  .stock-zero {
-    color: var(--error);
-  }
-  
-  /* ---------------------------------------------
+  width: 100%;
+  border-collapse: collapse;
+  background-color: var(--neutral-50);
+  text-align: left;
+}
+
+thead {
+  position: sticky;
+  top: 0;
+  background-color: var(--neutral-900);
+  color: var(--text-dark);
+  z-index: 1;
+}
+
+th {
+  padding: 0.75rem 2rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+td {
+  padding: 1rem 2rem;
+  font-size: var(--fs-body);
+  font-weight: 500;
+  border-bottom: 0.0625rem solid var(--neutral-100);
+}
+
+tbody tr {
+  position: relative;
+}
+
+/* Row Hover Effects */
+#bookTable tbody tr:hover,
+#historyTable tbody tr:hover {
+  background-color: var(--primary-100) !important;
+  transition: 0.15s;
+}
+
+/* Stock Status Coloring */
+.stock-low {
+  color: var(--warning);
+}
+
+.stock-zero {
+  color: var(--error);
+}
+
+/* ---------------------------------------------
      Book Table Column Widths
   --------------------------------------------- */
-  #bookTable th:nth-child(1),
-  #bookTable td:nth-child(1) {
-    max-width: 15rem;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  
-  #bookTable th:nth-child(2),
-  #bookTable td:nth-child(2) {
-    max-width: 10rem;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  
-  #bookTable th:nth-child(3),
-  #bookTable td:nth-child(3),
-  #bookTable th:nth-child(4),
-  #bookTable td:nth-child(4) {
-    width: 1rem;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  
-  #bookTable td:nth-child(3),
-  #bookTable td:nth-child(4) {
-    text-align: center;
-  }
-  
-  #bookTable th:nth-child(5),
-  #bookTable td:nth-child(5) {
-    max-width: 10rem;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  
-  /* ---------------------------------------------
+#bookTable th:nth-child(1),
+#bookTable td:nth-child(1) {
+  max-width: 15rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#bookTable th:nth-child(2),
+#bookTable td:nth-child(2) {
+  max-width: 10rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#bookTable th:nth-child(3),
+#bookTable td:nth-child(3),
+#bookTable th:nth-child(4),
+#bookTable td:nth-child(4) {
+  width: 1rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#bookTable td:nth-child(3),
+#bookTable td:nth-child(4) {
+  text-align: center;
+}
+
+#bookTable th:nth-child(5),
+#bookTable td:nth-child(5) {
+  max-width: 15rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---------------------------------------------
      History Table Column Widths
   --------------------------------------------- */
-  #historyTable th:nth-child(1),
-  #historyTable td:nth-child(1) {
-    max-width: 8rem;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  
-  #historyTable th:nth-child(2),
-  #historyTable td:nth-child(2) {
-    max-width: 20rem;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  
-  #historyTable th:nth-child(3),
-  #historyTable td:nth-child(3),
-  #historyTable th:nth-child(4),
-  #historyTable td:nth-child(4),
-  #historyTable th:nth-child(6),
-  #historyTable td:nth-child(6) {
-    width: 1rem;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  
-  #historyTable td:nth-child(4) {
-    text-align: center;
-  }
-  
-  #historyTable th:nth-child(5),
-  #historyTable td:nth-child(5) {
-    max-width: 20rem;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  
-  /* ---------------------------------------------
+#historyTable th:nth-child(1),
+#historyTable td:nth-child(1) {
+  width: 1rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#historyTable th:nth-child(2),
+#historyTable td:nth-child(2) {
+  max-width: 20rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#historyTable th:nth-child(3),
+#historyTable td:nth-child(3),
+#historyTable th:nth-child(4),
+#historyTable td:nth-child(4),
+#historyTable th:nth-child(6),
+#historyTable td:nth-child(6) {
+  width: 1rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#historyTable td:nth-child(4) {
+  text-align: center;
+}
+
+#historyTable th:nth-child(5),
+#historyTable td:nth-child(5) {
+  max-width: 20rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---------------------------------------------
      Edit & Sell Icons
   --------------------------------------------- */
-  .has-icon {
-    position: relative;
-  }
-  
-  .edit-icon,
-  .sell-icon {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    display: none;
-    cursor: pointer;
-    border-radius: var(--border-circle);
-    padding: 0.3rem;
-    transition: 0.2s ease;
-  }
-  
-  .edit-icon {
-    right: 3.8rem;
-  }
-  
-  .sell-icon {
-    right: 1rem;
-  }
-  
-  /* Show icons on row hover */
-  tbody tr:hover .edit-icon,
-  tbody tr:hover .sell-icon {
-    display: flex;
-  }
-  
-  .edit-icon:hover,
-  .sell-icon:hover {
-    background-color: var(--neutral-50);
-  }
-  
-  .edit-icon svg,
-  .sell-icon svg {
-    fill: var(--neutral-900);
-  }
-  
-  /* Sell disabled state */
-  .sell-icon.disabled {
-    pointer-events: none;
-  }
-  
-  .sell-icon.disabled svg {
-    fill: var(--neutral-300);
-  }
-  
-  /* ---------------------------------------------
+.has-icon {
+  position: relative;
+}
+
+.edit-icon,
+.sell-icon,
+.delete-icon {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  display: none;
+  cursor: pointer;
+  border-radius: var(--border-circle);
+  padding: 0.3rem;
+  transition: 0.2s ease;
+}
+
+.edit-icon {
+  right: 6.5rem;
+}
+
+.sell-icon {
+  right: 4rem;
+}
+
+.delete-icon {
+  right: 1.5rem;
+}
+
+.delete-icon:hover svg {
+  fill: var(--error); 
+}
+
+.delete-icon.disabled {
+  pointer-events: none;
+}
+
+/* Repoziționare pentru volunteer */
+.volunteer-icons .edit-icon {
+  right: 4rem;
+}
+
+.volunteer-icons .sell-icon {
+  right: 1.5rem;
+}
+
+/* Show icons on row hover */
+tbody tr:hover .edit-icon,
+tbody tr:hover .sell-icon,
+tbody tr:hover .delete-icon {
+  display: flex;
+}
+
+.edit-icon:hover,
+.sell-icon:hover,
+.delete-icon:hover {
+  background-color: var(--neutral-50);
+}
+
+.edit-icon svg,
+.sell-icon svg,
+.delete-icon svg {
+  fill: var(--neutral-900);
+}
+
+/* Sell disabled state */
+.sell-icon.disabled {
+  pointer-events: none;
+}
+
+.sell-icon.disabled svg {
+  fill: var(--neutral-300);
+}
+
+/* ---------------------------------------------
      Table Header Interactive Elements
   --------------------------------------------- */
-  #bookTable th#titleHeader,
-  #bookTable th#authorHeader {
-    position: relative;
-    cursor: pointer;
-  }
-  
-  .sort-arrow {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-  }
-  
-  .price-filter {
-    position: absolute;
-    top: 0.25rem;
-    margin-left: 0.5rem;
-    cursor: pointer;
-  }
-  
-  .sort-arrow svg,
-  .price-filter svg {
-    fill: var(--primary-50);
-    transition: 0.2s ease;
-  }
-  
-  .price-filter.active svg {
-    fill: var(--warning);
-  }
+#bookTable th#titleHeader,
+#bookTable th#authorHeader {
+  position: relative;
+  cursor: pointer;
+}
+
+.sort-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.price-filter {
+  position: absolute;
+  top: 0.25rem;
+  margin-left: 0.5rem;
+  cursor: pointer;
+}
+
+.sort-arrow svg,
+.price-filter svg {
+  fill: var(--primary-50);
+  transition: 0.2s ease;
+}
+
+.price-filter.active svg {
+  fill: var(--warning);
+}

@@ -142,12 +142,3 @@ html {
   *::-webkit-scrollbar-thumb:hover {
     background: var(--neutral-700);
   }
-
-
-  .btn {
-    border: none;
-    cursor: pointer;
-    transition: 0.2s ease-in-out;
-    font-weight: 500;
-    font-size: 0.85rem;
-  }
